@@ -84,7 +84,7 @@
 
             <h3>Layers identification</h3>
 
-            <p>{{ layers|length }} layer{% if layers|length != 1 %}s{% endif %} found (in the conventional cell) using a skin factor of {{ skin_factor }}.</p>
+            <p>{{ layers|length }} layer{% if layers|length != 1 %}s{% endif %} found (in the conventional cell).</p>
 
             <div id="accordion-cell-after-rotation">
             <h2>Layers unit cell and coordinates (after cell rotation)</h2>
@@ -160,7 +160,7 @@
             {% endfor %}
 
             {% else %}    
-                No layers could be found for this structure and the specified skin factor of {{ skin_factor }}.
+                No layers could be found for this structure.
             {% endif %}
 
         </div>
