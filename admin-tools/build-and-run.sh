@@ -31,7 +31,7 @@ then
 fi
 
 # To launch container
-docker run -d -p 8091:80 --rm --name=ml-layer-finder-tool-instance ml-layer-finder-tool
+docker run -d -p 8098:80 --rm --name=ml-layer-finder-tool-instance ml-layer-finder-tool
 
 # Pass '-n' to avoid opening a new browser window
 if [ "$1" != "-n" ]
