@@ -6,16 +6,16 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # This could fail if the image is not there, so I temporarily set +e
 set +e
-OLDIMAGE=`docker images | awk '{print $1, $2, $3}' | grep '^layer-raman-ir-tool\ latest\ ' | awk '{print $3}'`
+OLDIMAGE=`docker images | awk '{print $1, $2, $3}' | grep '^ml-layer-finder-tool\ latest\ ' | awk '{print $3}'`
 set -e
 
 # To build container
-docker build -t layer-raman-ir-tool "$DIR/.."
+docker build -t ml-layer-finder-tool "$DIR/.."
 
 # Check the new image name
-NEWIMAGE=`docker images | awk '{print $1, $2, $3}' | grep '^layer-raman-ir-tool\ latest\ ' | awk '{print $3}'`
+NEWIMAGE=`docker images | awk '{print $1, $2, $3}' | grep '^ml-layer-finder-tool\ latest\ ' | awk '{print $3}'`
 
-LAYER_CONTAINER=`docker ps --filter="name=layer-raman-ir-tool-instance" -q`
+LAYER_CONTAINER=`docker ps --filter="name=ml-layer-finder-tool-instance" -q`
 if [ "$LAYER_CONTAINER" != "" ]
 then
     docker kill "$LAYER_CONTAINER"
@@ -31,21 +31,21 @@ then
 fi
 
 # To launch container
-docker run -d -p 8091:80 --rm --name=layer-raman-ir-tool-instance layer-raman-ir-tool
+docker run -d -p 8091:80 --rm --name=ml-layer-finder-tool-instance ml-layer-finder-tool
 
 # Pass '-n' to avoid opening a new browser window
 if [ "$1" != "-n" ]
 then
     # Give it a second to let apache start
     sleep 1
-    python -c "import webbrowser; webbrowser.open('http://localhost:8091')"
-    echo "Browser opened at http://localhost:8091"
+    python -c "import webbrowser; webbrowser.open('http://localhost:8098')"
+    echo "Browser opened at http://localhost:8098"
     echo "Pass -n to avoid opening it"
 else
     echo "You can access the webservice at:"
-    echo "http://localhost:8091"
+    echo "http://localhost:8098"
 fi
 
 echo ""
 echo "You can kill the service with:"
-echo "docker kill layer-raman-ir-tool-instance"
+echo "docker kill ml-layer-finder-tool-instance"
