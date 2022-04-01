@@ -1,0 +1,20 @@
+window_title: "Fan diagrams of layered materials"
+page_title: "Fan diagrams and optically-active modes of layered materials"
+
+about_section_title: "About this tool"
+
+templates:
+  how_to_cite: "how_to_cite.html"
+  about: "about.html"
+  select_content: "custom_select_content.html"
+  upload_structure_additional_content: "upload_structure_additional_content.html"
+
+use_upload_structure_block: True
+
+upload_structure_block_order: ['cif-pymatgen', 'cif-ase', 'pdb-ase', 'xyz-ase']
+
+additional_accordion_entries:
+#  - header: "What is this?"
+#    template_page: what_is.html
+  - header: "Acknowledgements"
+    template_page: ack.html
