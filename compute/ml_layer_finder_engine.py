@@ -24,6 +24,7 @@ from .utils.structures import (
 from tools_barebone import get_tools_barebone_version
 from .utils.hall import hall_numbers_of_spacegroup
 from .utils.layers import find_layers, find_common_transformation
+from .utils.lowdimfinder import LowDimFinder
 from .utils.pointgroup import (
     pg_number_from_hm_symbol,
     prepare_pointgroup,
@@ -82,7 +83,8 @@ def process_structure_core(
     ]
 
     inputstructure_positions_cartesian = np.dot(
-        np.array(structure[1]), np.array(structure[0]),
+        np.array(structure[1]),
+        np.array(structure[0]),
     ).tolist()
     inputstructure_atoms_cartesian = [
         [label, coords[0], coords[1], coords[2]]
@@ -263,6 +265,3 @@ def process_structure_core(
     return_data["compute_time"] = compute_time
     logger.debug(json.dumps(return_data, indent=2, sort_keys=True))
     return return_data
-
-
-
