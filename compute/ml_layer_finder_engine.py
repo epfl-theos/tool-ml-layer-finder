@@ -160,11 +160,22 @@ def process_structure_core(
 
     if 2 in low_dim_finder.get_group_data()["dimensionality"]:
         is_layered = True
+        from ase import Atoms
 
+        layer_structures = []
+        for i in range(len(low_dim_finder.get_group_data()["dimensionality"])):
+            if 2 == low_dim_finder.get_group_data()["dimensionality"][i]:
+                struc = Atoms(
+                    symbols=low_dim_finder.get_group_data()["chemical_symbols"][i],
+                    positions=low_dim_finder.get_group_data()["positions"][i],
+                    cell=low_dim_finder.get_group_data()["cell"][i],
+                    tags=low_dim_finder.get_group_data()["tags"][i],
+                )
+                layer_structures.append(struc)
     else:
         is_layered = False
 
-    is_layered_2, layer_structures, layer_indices, rotated_asecell = find_layers(
+    is_layered_2, layer_structures_2, layer_indices, rotated_asecell = find_layers(
         conventional_asecell
     )
 
