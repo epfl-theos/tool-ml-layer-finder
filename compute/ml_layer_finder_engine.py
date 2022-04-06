@@ -144,7 +144,27 @@ def process_structure_core(
     # This is important because we sometimes (in the output) make assumptions that the number of layers found
     # is the number of layers in the conventional cell (e.g. when we say "Multilayer spacegroup
     # for N >= {num_layers_conventional}").
-    is_layered, layer_structures, layer_indices, rotated_asecell = find_layers(
+
+    low_dim_finder = LowDimFinder(
+        aiida_structure=conventional_asecell,
+        vacuum_space=40.0,
+        radii_offset=-0.7,
+        bond_margin=0.0,
+        max_supercell=3,
+        min_supercell=3,
+        rotation=True,
+        full_periodicity=False,
+        radii_source="alvarez",
+        orthogonal_axis_2D=True,
+    )
+
+    if 2 in low_dim_finder.get_group_data()["dimensionality"]:
+        is_layered = True
+
+    else:
+        is_layered = False
+
+    is_layered_2, layer_structures, layer_indices, rotated_asecell = find_layers(
         conventional_asecell
     )
 
