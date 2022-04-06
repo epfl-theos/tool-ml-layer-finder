@@ -175,7 +175,9 @@ def process_structure_core(
     else:
         is_layered = False
 
-    is_layered_2, layer_structures_2, layer_indices, rotated_asecell = find_layers(
+    rotated_asecell = low_dim_finder._rotated_structures[0]
+
+    is_layered_2, layer_structures_2, layer_indices, rotated_asecell_2 = find_layers(
         conventional_asecell
     )
 
