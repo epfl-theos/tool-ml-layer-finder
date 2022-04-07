@@ -1,84 +1,86 @@
+<div style="max-width: 800px; margin: auto;">
+    <div id="maintitle">
+        <h1>Machine-learning based identification of two-dimensional materials</h1>
+    </div>
 
-    <div style="max-width: 800px; margin: auto;">
-        <div id="maintitle">
-            <h1>Machine-learning based identification of two-dimensional materials</h1>
-        </div>
-
-        <div class='structureouter'>
-        <div id='structuretitle'><h2>Input crystal structure</h2>
-        <p><em>Drag to rotate, scroll to zoom, double-click to enable/disable interaction</em></p>
-        <p><em>Note: bonds drawn by the visualizer are those used internally to find layers</em></p>
+    <div class='structureouter'>
+        <div id='structuretitle'>
+            <h2>Input crystal structure</h2>
+            <p><em>Drag to rotate, scroll to zoom, double-click to enable/disable interaction</em></p>
+            <p><em>Note: bonds drawn by the visualizer are those used internally to find layers</em></p>
         </div>
         {{ render_jsmol_visualizer(suffix='bulk', nx=2, ny=2, nz=2) }}
 
         <div id="topinfo">
             <div id="accordion-initialcoords">
-            <h2>Show parsed input coordinates (please double-check here if the parser worked properly)</h2>
-            <div>
-                <h3>Input cell vectors (&#8491;)</h3>
-                <table class="center">
-                <thead>
-                    <th style="padding-right: 15px; text-align: center">v</th>
-                    <th style="text-align: center">x</th>
-                    <th style="text-align: center">y</th>
-                    <th style="text-align: center">z</th>
-                </thead>
-                <tbody>
-                    {% for v in inputstructure_cell_vectors %}
-                    <tr>
-                    <td style="padding-right: 15px; text-align: center">v<sub>{{ v[0] }}</sub></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[1]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[2]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[3]|float }}</code></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
+                <h2>Show parsed input coordinates (please double-check here if the parser worked properly)</h2>
+                <div>
+                    <h3>Input cell vectors (&#8491;)</h3>
+                    <table class="center">
+                        <thead>
+                            <th style="padding-right: 15px; text-align: center">v</th>
+                            <th style="text-align: center">x</th>
+                            <th style="text-align: center">y</th>
+                            <th style="text-align: center">z</th>
+                        </thead>
+                        <tbody>
+                            {% for v in inputstructure_cell_vectors %}
+                            <tr>
+                                <td style="padding-right: 15px; text-align: center">v<sub>{{ v[0] }}</sub></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[1]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[2]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[3]|float }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-                <h3>Input atom coordinates (scaled)</h3>
-                <table class="center">
-                <thead>
-                    <th style="padding-right: 15px; text-align: center">Element</th>
-                    <th style="text-align: center">r<sub>1</sub></th>
-                    <th style="text-align: center">r<sub>2</sub></th>
-                    <th style="text-align: center">r<sub>3</sub></th>
-                </thead>
-                <tbody>
-                    {% for b in inputstructure_atoms_scaled %}
-                    <tr>
-                    <td style="padding-right: 15px; text-align: center">{{ b[0] }}</td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[1]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[2]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[3]|float }}</code></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
+                    <h3>Input atom coordinates (scaled)</h3>
+                    <table class="center">
+                        <thead>
+                            <th style="padding-right: 15px; text-align: center">Element</th>
+                            <th style="text-align: center">r<sub>1</sub></th>
+                            <th style="text-align: center">r<sub>2</sub></th>
+                            <th style="text-align: center">r<sub>3</sub></th>
+                        </thead>
+                        <tbody>
+                            {% for b in inputstructure_atoms_scaled %}
+                            <tr>
+                                <td style="padding-right: 15px; text-align: center">{{ b[0] }}</td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[1]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[2]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[3]|float }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-                <h3>Input atom coordinates (Cartesian, &#8491;)</h3>
-                <table class="center">
-                <thead>
-                    <th style="padding-right: 15px; text-align: center">Element</th>
-                    <th style="text-align: center">x</th>
-                    <th style="text-align: center">y</th>
-                    <th style="text-align: center">z</th>
-                </thead>
-                <tbody>
-                    {% for b in inputstructure_atoms_cartesian %}
-                    <tr>
-                    <td style="padding-right: 15px; text-align: center">{{ b[0] }}</td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[1]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[2]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % b[3]|float }}</code></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
-            </div>
+                    <h3>Input atom coordinates (Cartesian, &#8491;)</h3>
+                    <table class="center">
+                        <thead>
+                            <th style="padding-right: 15px; text-align: center">Element</th>
+                            <th style="text-align: center">x</th>
+                            <th style="text-align: center">y</th>
+                            <th style="text-align: center">z</th>
+                        </thead>
+                        <tbody>
+                            {% for b in inputstructure_atoms_cartesian %}
+                            <tr>
+                                <td style="padding-right: 15px; text-align: center">{{ b[0] }}</td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[1]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[2]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % b[3]|float }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div id='layerstitle'><h2>Layer search</h2></div>
+        <div id='layerstitle'>
+            <h2>Layer search</h2>
+        </div>
         <div>
             {% if layers %}
 
@@ -87,179 +89,193 @@
             <p>{{ layers|length }} layer{% if layers|length != 1 %}s{% endif %} found (in the conventional cell).</p>
 
             <div id="accordion-cell-after-rotation">
-            <h2>Layers unit cell and coordinates (after cell rotation)</h2>
-            <div>
-            <p>We report here the unit cell common to all layers
-            and the corresponding atomic coordinates.</p>
-            <p>The unit cell shown is still the one of the input bulk system, obtained after finding the conventional cell,
-            refining the cell to enforce the symmetries that were found, and finally rotating the system so
-            that layers are on <em>xy</em> planes.</p>
-            <p>Layers have been sorted by their stacking index, and the first layer is centered (roughly) around <em>z</em>=0.</p>
-            
+                <h2>Layers unit cell and coordinates (after cell rotation)</h2>
+                <div>
+                    <p>We report here the unit cell common to all layers
+                        and the corresponding atomic coordinates.</p>
+                    <p>The unit cell shown is still the one of the input bulk system, obtained after finding the
+                        conventional cell,
+                        refining the cell to enforce the symmetries that were found, and finally rotating the system so
+                        that layers are on <em>xy</em> planes.</p>
+                    <p>Layers have been sorted by their stacking index, and the first layer is centered (roughly) around
+                        <em>z</em>=0.
+                    </p>
 
 
-            <h3>In-plane cell vectors (&#8491;)</h3>
-                <table class="center">
-                <thead>
-                    <th style="padding-right: 15px; text-align: center">v</th>
-                    <th style="text-align: center">x</th>
-                    <th style="text-align: center">y</th>
-                </thead>
-                <tbody>
-                    {% for v in rotated_cell['layer_cell'] %}
-                    <tr>
-                    <td style="padding-right: 15px; text-align: center">v<sub>{{ loop.index }}</sub></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[0]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[1]|float }}</code></td>
-                    <td style="text-align: right"><code>{{ "%.10f" % v[2]|float }}</code></td>
-                    </tr>
+
+                    <h3>In-plane cell vectors (&#8491;)</h3>
+                    <table class="center">
+                        <thead>
+                            <th style="padding-right: 15px; text-align: center">v</th>
+                            <th style="text-align: center">x</th>
+                            <th style="text-align: center">y</th>
+                        </thead>
+                        <tbody>
+                            {% for v in rotated_cell['layer_cell'] %}
+                            <tr>
+                                <td style="padding-right: 15px; text-align: center">v<sub>{{ loop.index }}</sub></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[0]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[1]|float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % v[2]|float }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <h3>Atomic Cartesian coordinates (&#8491;), grouped per layer</h3>
+                    {% for this_layer_atoms in rotated_cell['layer_atoms'] %}
+                    <table class="center">
+                        <thead>
+                            <tr>
+                                <th style="padding-right: 15px; text-align: center">Layer {{ loop.index }}</th>
+                                <th style="text-align: center">x</th>
+                                <th style="text-align: center">y</th>
+                                <th style="text-align: center">z</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for atom_info in this_layer_atoms %}
+                            <tr>
+                                <td style="padding-right: 15px; text-align: center">{{ atom_info[0] }}</td>
+                                <td style="text-align: right"><code>{{  "%.10f" % atom_info[1][0] | float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % atom_info[1][1] | float }}</code></td>
+                                <td style="text-align: right"><code>{{ "%.10f" % atom_info[1][2] | float }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                     {% endfor %}
-                </tbody>
-                </table>
+                </div>
+            </div>
 
-            <h3>Atomic Cartesian coordinates (&#8491;), grouped per layer</h3>
-            {% for this_layer_atoms in rotated_cell['layer_atoms'] %}
-                <table class="center">
-                <thead>
-                    <tr><th style="padding-right: 15px; text-align: center">Layer {{ loop.index }}</th>
-                    <th style="text-align: center">x</th>
-                    <th style="text-align: center">y</th>
-                    <th style="text-align: center">z</th>
-                </tr></thead>
-                <tbody>
-                
-                {% for atom_info in this_layer_atoms %}
-                    <tr>
-                        <td style="padding-right: 15px; text-align: center">{{ atom_info[0] }}</td>
-                        <td style="text-align: right"><code>{{  "%.10f" % atom_info[1][0] | float }}</code></td>
-                        <td style="text-align: right"><code>{{ "%.10f" % atom_info[1][1] | float }}</code></td>
-                        <td style="text-align: right"><code>{{ "%.10f" % atom_info[1][2] | float }}</code></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                </table>
-            {% endfor %}
-            </div>
-            </div>
+
 
             <h3>Layers visualization</h3>
 
             {% for layer_xsf, this_layer_indices in layers %}
-                <div id="accordion-layer{{loop.index}}">
-                    <h3>Layer {{loop.index}} (including the {{ this_layer_indices|length }} atoms with indices 
-                {% for index in this_layer_indices|sort -%}
+            <div id="accordion-layer{{loop.index}}">
+                <h3>Layer {{loop.index}} (including the {{ this_layer_indices|length }} atoms with indices
+                    {% for index in this_layer_indices|sort -%}
                     {{index+1}}{% if not loop.last %}, {% endif -%}
-                {% endfor -%})</h3>
-                    <div>
-                        <div class='structureouter'>
-                            {# ~ is the jinja string-concatenation operator #}
-                            {{ render_jsmol_visualizer(suffix='layer' ~ loop.index, nx=3, ny=3, nz=1) }}
-                        </div>
+                    {% endfor -%})</h3>
+                <div>
+                    <div class='structureouter'>
+                        {# ~ is the jinja string-concatenation operator #}
+                        {{ render_jsmol_visualizer(suffix='layer' ~ loop.index, nx=3, ny=3, nz=1) }}
                     </div>
                 </div>
+            </div>
+
             {% endfor %}
 
-            {% else %}    
-                No layers could be found for this structure.
+            <div id='machinelearningtitle'>
+                <h2>
+                    <center>Machine learning</center>
+                </h2>
+            </div>
+
+            {% else %}
+            No layers could be found for this structure.
             {% endif %}
 
         </div>
 
-    <hr style="margin-top: 40px;">
+        <hr style="margin-top: 40px;">
 
-    <div id='finalinfo'>
-        <div style="border: 1px solid #aaa;border-radius: 6px;margin-left: -5px;padding: 5px;margin-right: -5px;margin-bottom: 15px;padding-bottom: 0;background-color: #ededed;">
-            <p><strong>How to cite:</strong> If you use this tool, please cite:<br>
-            <strong>TO BE UPDATED</strong>.
-            </p>
+        <div id='finalinfo'>
+            <div
+                style="border: 1px solid #aaa;border-radius: 6px;margin-left: -5px;padding: 5px;margin-right: -5px;margin-bottom: 15px;padding-bottom: 0;background-color: #ededed;">
+                <p><strong>How to cite:</strong> If you use this tool, please cite:<br>
+                    <strong>TO BE UPDATED</strong>.
+                </p>
+            </div>
+            <p>Found a bug or have a suggestion? Please <a
+                    href="https://github.com/epfl-theos/tool-ml-layer-finder/issues" target="_blank">check existing
+                    issues here</a> and, if needed, open a new one.</p>
+            <p><span style="font-weight: bold;">
+                    Technical info</span>:
+                Time spent to compute quantities: {{ '%.3f' % compute_time }} s.
+                <a href="https://wiki.fysik.dtu.dk/ase/index.html" target="_blank">ASE</a> version: {{ ase_version }}.
+                <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a>
+                version: {{tools_barebone_version}}.
+                This tool version: {{this_tool_version}}.
         </div>
-        <p>Found a bug or have a suggestion? Please <a href="https://github.com/epfl-theos/tool-ml-layer-finder/issues" target="_blank">check existing issues here</a> and, if needed, open a new one.</p>
-        <p><span style="font-weight: bold;">
-            Technical info</span>:
-            Time spent to compute quantities: {{ '%.3f' % compute_time }} s.
-            <a href="https://wiki.fysik.dtu.dk/ase/index.html" target="_blank">ASE</a> version: {{ ase_version }}.
-            <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a> version: {{tools_barebone_version}}.
-            This tool version: {{this_tool_version}}.
+
+
     </div>
-    
+    {% if has_common_layers %}
+    {# Only show if the vue div has been put on the page #}
+    <script src="../../user_static/js/main.js"></script>
+    {% endif %}
+    <script src="../../user_static/js/visualization.js"></script>
+    <script>
+        bulkstructureviewer = jsmolCrystal({{ xsfstructure| tojson | safe }}, "structure-content-bulk", "jmolAppletbulk", [2, 2, 2]);
+        {% for layer_xsf, this_layer_indices in layers %}
+        layerstructureviewers[{{ loop.index }}] = jsmolCrystal({{ layer_xsf| tojson | safe }}, "structure-content-layer{{loop.index}}", "jmolAppletlayer{{loop.index}}", [3, 3, 1]);
+        {% endfor %}
 
-</div>
-{% if has_common_layers %}
-{# Only show if the vue div has been put on the page #}
-<script src="../../user_static/js/main.js"></script>
-{% endif %}
-<script src="../../user_static/js/visualization.js"></script>
-<script>    
-    bulkstructureviewer = jsmolCrystal({{ xsfstructure|tojson|safe }}, "structure-content-bulk", "jmolAppletbulk", [2,2,2]);
-    {% for layer_xsf, this_layer_indices in layers %}
-       layerstructureviewers[{{loop.index}}] = jsmolCrystal({{ layer_xsf|tojson|safe }}, "structure-content-layer{{loop.index}}", "jmolAppletlayer{{loop.index}}", [3,3,1]);
-    {% endfor %}
+        $(document).ready(function () {
+            var divjsmol = document.getElementById('crystal-bulk');
+            var jsmolcontent = document.getElementById('jmolAppletbulk_appletinfotablediv');
+            divjsmol.appendChild(jsmolcontent);
+            enableDoubleTap(bulkstructureviewer['_mouseInterface'], function () {
+                toggleStrVisInteraction(false, 'str-overlay-bulk');
+            }, ignoreOnMove = true);
 
-    $(document).ready(function(){
-          var divjsmol = document.getElementById('crystal-bulk');
-          var jsmolcontent = document.getElementById('jmolAppletbulk_appletinfotablediv');
-          divjsmol.appendChild(jsmolcontent);
-          enableDoubleTap(bulkstructureviewer['_mouseInterface'], function() {
-            toggleStrVisInteraction(false, 'str-overlay-bulk');
-          }, ignoreOnMove=true);
-
-          var stroverlay = document.getElementById('str-overlay-bulk');
-          stroverlay.onmouseenter = function()
-            {
+            var stroverlay = document.getElementById('str-overlay-bulk');
+            stroverlay.onmouseenter = function () {
                 this.style.backgroundColor = "rgba(230,230,230,0.5)";
                 document.getElementById('str-overlay-bulk-span').innerText = "Double click to toggle interaction";
                 // console.log(this, 'enter');
             }
-          stroverlay.onmouseleave = function()
-            {
+            stroverlay.onmouseleave = function () {
                 // 0.0 for alpha doesn't work properly, apparently
                 this.style.backgroundColor = "rgba(255,255,255,0.01)";
                 document.getElementById('str-overlay-bulk-span').innerText = "";
                 // console.log(this, 'leave');
             }
 
-          // Enable double-tap events for phones
-          enableDoubleTap(stroverlay, function() {
-            toggleStrVisInteraction(true, 'str-overlay-bulk');
-          });
+            // Enable double-tap events for phones
+            enableDoubleTap(stroverlay, function () {
+                toggleStrVisInteraction(true, 'str-overlay-bulk');
+            });
 
 
-        {% for layer_xsf, this_layer_indices in layers %}
+            {% for layer_xsf, this_layer_indices in layers %}
 
-          var divjsmol = document.getElementById('crystal-layer{{loop.index}}');
-          var jsmolcontent = document.getElementById('jmolAppletlayer{{loop.index}}_appletinfotablediv');
-          divjsmol.appendChild(jsmolcontent);
-          enableDoubleTap(layerstructureviewers[{{loop.index}}]['_mouseInterface'], function() {
-            toggleStrVisInteraction(false, 'str-overlay-layer{{loop.index}}');
-          }, ignoreOnMove=true);
+            var divjsmol = document.getElementById('crystal-layer{{loop.index}}');
+            var jsmolcontent = document.getElementById('jmolAppletlayer{{loop.index}}_appletinfotablediv');
+            divjsmol.appendChild(jsmolcontent);
+            enableDoubleTap(layerstructureviewers[{{ loop.index }}]['_mouseInterface'], function () {
+                toggleStrVisInteraction(false, 'str-overlay-layer{{loop.index}}');
+            }, ignoreOnMove = true);
 
-          var stroverlay = document.getElementById('str-overlay-layer{{loop.index}}');
-          stroverlay.onmouseenter = function()
-            {
-                this.style.backgroundColor = "rgba(230,230,230,0.5)";
-                document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "Double click to toggle interaction";
-                // console.log(this, 'enter');
-            }
-          stroverlay.onmouseleave = function()
-            {
-                // 0.0 for alpha doesn't work properly, apparently
-                this.style.backgroundColor = "rgba(255,255,255,0.01)";
-                document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "";
-                // console.log(this, 'leave');
-            }
+        var stroverlay = document.getElementById('str-overlay-layer{{loop.index}}');
+        stroverlay.onmouseenter = function () {
+            this.style.backgroundColor = "rgba(230,230,230,0.5)";
+            document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "Double click to toggle interaction";
+            // console.log(this, 'enter');
+        }
+        stroverlay.onmouseleave = function () {
+            // 0.0 for alpha doesn't work properly, apparently
+            this.style.backgroundColor = "rgba(255,255,255,0.01)";
+            document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "";
+            // console.log(this, 'leave');
+        }
 
-          // Enable double-tap events for phones
-          enableDoubleTap(stroverlay, function() {
+        // Enable double-tap events for phones
+        enableDoubleTap(stroverlay, function () {
             toggleStrVisInteraction(true, 'str-overlay-layer{{loop.index}}');
-          });
+        });
 
         {% endfor %}
 
-        $('[data-toggle="tooltip"]').tooltip({placement: "top"});
+        $('[data-toggle="tooltip"]').tooltip({ placement: "top" });
       });
 
-</script>
+    </script>
 
-<div style ="position: relative" data-iframe-height></div>
+    <div style="position: relative" data-iframe-height></div>
 
 </div>
