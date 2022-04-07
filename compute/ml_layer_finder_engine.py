@@ -178,9 +178,10 @@ def process_structure_core(
     else:
         is_layered = False
 
-    is_layered_2, layer_structures_2, layer_indices_2, rotated_asecell_2 = find_layers(
-        conventional_asecell
-    )
+    ##### MOHAMMAD: replace all the part and commented!
+    # is_layered_2, layer_structures_2, layer_indices_2, rotated_asecell_2 = find_layers(
+    #     conventional_asecell
+    # )
 
     detected_hall_number = None
     if rotated_asecell is not None:
