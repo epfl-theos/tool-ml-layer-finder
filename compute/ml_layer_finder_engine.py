@@ -33,15 +33,16 @@ from .utils.pointgroup import (
 )
 
 ###Featurization
-from matminer.featurizers.base import MultipleFeaturizer
-from matminer.featurizers.structure import (
-    SiteStatsFingerprint,
-    ChemicalOrdering,
-    MaximumPackingEfficiency,
-)
+# from matminer.featurizers.base import MultipleFeaturizer
+
+# from matminer.featurizers.structure import (
+#     SiteStatsFingerprint,
+#     ChemicalOrdering,
+#     MaximumPackingEfficiency,
+# )
 
 ### ML Model
-import joblib
+# import joblib
 
 # Version of this tool
 __version__ = "21.11.0"
@@ -119,7 +120,7 @@ def process_structure_core(
         "ase_version": ase.__version__,
         "tools_barebone_version": get_tools_barebone_version(),
         "this_tool_version": __version__,
-        "ML_predictions": False,
+        #    "ML_predictions": False,
     }
 
     asecell = ase_from_tuple(structure)
@@ -307,27 +308,27 @@ def process_structure_core(
         ],
     }
 
-    featurizer = MultipleFeaturizer(
-        [
-            ChemicalOrdering(),
-            MaximumPackingEfficiency(),
-            SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
-        ]
-    )
+    # featurizer = MultipleFeaturizer(
+    #     [
+    #         ChemicalOrdering(),
+    #         MaximumPackingEfficiency(),
+    #         SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
+    #     ]
+    # )
 
-    structures_pg = AseAtomsAdaptor.get_structure(conventional_asecell)
+    # structures_pg = AseAtomsAdaptor.get_structure(conventional_asecell)
 
-    list_structures = {}
-    list_structures[1] = structures_pg
+    # list_structures = {}
+    # list_structures[1] = structures_pg
 
-    X = featurizer.featurize_many(list(list_structures.values()), ignore_errors=True)
+    # X = featurizer.featurize_many(list(list_structures.values()), ignore_errors=True)
 
-    loaded_RF = joblib.load("./../model/random_forest_model.joblib")
+    # loaded_RF = joblib.load("./../model/random_forest_model.joblib")
 
-    pred_RF = loaded_RF.predict(X)
+    # pred_RF = loaded_RF.predict(X)
 
-    if pred_RF == [1]:
-        return_data["ML_predictions"] = True
+    # if pred_RF == [1]:
+    #    return_data["ML_predictions"] = True
 
     # I return here; some sections will not be present in the output so they will not be shown.
     compute_time = time.time() - start_time
