@@ -16,6 +16,11 @@ RUN cp /home/app/code/webservice/templates/header.html /home/app/code/webservice
 # RUN pwd
 COPY ./tool-requirements.txt /home/app/code/webservice/static/tool-requirements.txt
 RUN pip3 install -r /home/app/code/webservice/static/tool-requirements.txt
+
+# Trained Model
+COPY ./model/random_forest_model.joblib /home/app/code/webservice/static/random_forest_model.joblib
+
+
 # Set proper permissions on files just copied
 RUN chmod -R o+rX /home/app/code/webservice/
 RUN chown -R app:app /home/app/code/webservice/
