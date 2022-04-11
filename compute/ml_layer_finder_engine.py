@@ -33,13 +33,13 @@ from .utils.pointgroup import (
 )
 
 ###Featurization
-# from matminer.featurizers.base import MultipleFeaturizer
+from matminer.featurizers.base import MultipleFeaturizer
 
-# from matminer.featurizers.structure import (
-#     SiteStatsFingerprint,
-#     ChemicalOrdering,
-#     MaximumPackingEfficiency,
-# )
+from matminer.featurizers.structure import (
+    SiteStatsFingerprint,
+    ChemicalOrdering,
+    MaximumPackingEfficiency,
+)
 
 ### ML Model
 # import joblib
