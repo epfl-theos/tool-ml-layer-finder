@@ -175,6 +175,12 @@
                 </h2>
             </div>
 
+            {% if ML_predictions %}
+            The strucutre can be exfoliated
+            {% else %}
+            The structure has a high binding energy.
+            {% endif %}
+
             {% else %}
             No layers could be found for this structure.
             {% endif %}
@@ -197,6 +203,9 @@
                     Technical info</span>:
                 Time spent to compute quantities: {{ '%.3f' % compute_time }} s.
                 <a href="https://wiki.fysik.dtu.dk/ase/index.html" target="_blank">ASE</a> version: {{ ase_version }}.
+                <a href="https://github.com/hackingmaterials/matminer" target="_blank">matminer</a> version: {{
+                matminer_version }}.
+                <a href="https://github.com/joblib/joblib" target="_blank">joblib</a> version: {{ joblib_version }}.
                 <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a>
                 version: {{tools_barebone_version}}.
                 This tool version: {{this_tool_version}}.
