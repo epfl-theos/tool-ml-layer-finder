@@ -13,8 +13,9 @@ RUN cp /home/app/code/webservice/templates/header.html /home/app/code/webservice
     sed -i "s|base.html|user_templates/base.html|g" /home/app/code/webservice/templates/header_pages.html && \
     sed -i "s|static/|../../static/|g" /home/app/code/webservice/templates/header_pages.html
 
-# RUN pip3 install -r tool-requirements.txt
-
+# RUN pwd
+COPY ./tool-requirements.txt /home/app/code/webservice/static/tool-requirements.txt
+RUN pip3 install -r /home/app/code/webservice/static/tool-requirements.txt
 # Set proper permissions on files just copied
 RUN chmod -R o+rX /home/app/code/webservice/
 RUN chown -R app:app /home/app/code/webservice/
