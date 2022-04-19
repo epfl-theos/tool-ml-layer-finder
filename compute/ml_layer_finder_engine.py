@@ -162,46 +162,48 @@ def process_structure_core(
     # for N >= {num_layers_conventional}").
 
     ### MOHAMMAD: Run LowDimFinder
+    for radiiOffset in [-0.75, -0.7, -0.65, -0.6, -0.55]:
 
-    low_dim_finder = LowDimFinder(
-        aiida_structure=conventional_asecell,
-        vacuum_space=40.0,
-        radii_offset=-0.75,
-        bond_margin=0.0,
-        max_supercell=3,
-        min_supercell=3,
-        rotation=True,
-        full_periodicity=False,
-        radii_source="alvarez",
-        orthogonal_axis_2D=True,
-    )
+        low_dim_finder = LowDimFinder(
+            aiida_structure=conventional_asecell,
+            vacuum_space=40.0,
+            radii_offset=radiiOffset,
+            bond_margin=0.0,
+            max_supercell=3,
+            min_supercell=3,
+            rotation=True,
+            full_periodicity=False,
+            radii_source="alvarez",
+            orthogonal_axis_2D=True,
+        )
 
-    ### MOHAMMAD: Replace four variables (is_layered, layer_structures, layer_indices, rotated_asecell) with LowDimFinder Results!
+        ### MOHAMMAD: Replace four variables (is_layered, layer_structures, layer_indices, rotated_asecell) with LowDimFinder Results!
 
-    low_dim_finder_results = low_dim_finder.get_group_data()
+        low_dim_finder_results = low_dim_finder.get_group_data()
 
-    if 2 in low_dim_finder_results["dimensionality"]:
-        is_layered = True
-        from ase import Atoms
+        if 2 in low_dim_finder_results["dimensionality"]:
+            is_layered = True
+            from ase import Atoms
 
-        layer_structures = []
-        layer_indices = []
-        for i in range(len(low_dim_finder_results["dimensionality"])):
-            if 2 == low_dim_finder_results["dimensionality"][i]:
-                struc = Atoms(
-                    symbols=low_dim_finder_results["chemical_symbols"][i],
-                    positions=low_dim_finder_results["positions"][i],
-                    cell=low_dim_finder_results["cell"][i],
-                    tags=low_dim_finder_results["tags"][i],
-                )
-                layer_structures.append(struc)
-                layer_indices.append(low_dim_finder._get_unit_cell_groups()[i])
-                rotated_asecell = low_dim_finder._rotated_structures[i]
-    else:
-        is_layered = False
-        layer_indices = None
-        layer_structures = None
-        rotated_asecell = None
+            layer_structures = []
+            layer_indices = []
+            for i in range(len(low_dim_finder_results["dimensionality"])):
+                if 2 == low_dim_finder_results["dimensionality"][i]:
+                    struc = Atoms(
+                        symbols=low_dim_finder_results["chemical_symbols"][i],
+                        positions=low_dim_finder_results["positions"][i],
+                        cell=low_dim_finder_results["cell"][i],
+                        tags=low_dim_finder_results["tags"][i],
+                    )
+                    layer_structures.append(struc)
+                    layer_indices.append(low_dim_finder._get_unit_cell_groups()[i])
+                    rotated_asecell = low_dim_finder._rotated_structures[i]
+            break
+        elif radiiOffset == -0.55:
+            is_layered = False
+            layer_indices = None
+            layer_structures = None
+            rotated_asecell = None
 
     ### MOHAMMAD: Just to be consistant with before and avoid further changes!
     ### MOHAMMAD: layer_indices must be smaller than the number of elements in a unitcell!
