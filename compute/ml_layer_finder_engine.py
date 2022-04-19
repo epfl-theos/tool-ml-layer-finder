@@ -33,6 +33,7 @@ from .utils.pointgroup import (
 )
 
 ###Featurization
+import matminer
 from matminer.featurizers.base import MultipleFeaturizer
 
 from matminer.featurizers.structure import (
@@ -42,7 +43,7 @@ from matminer.featurizers.structure import (
 )
 
 ### ML Model
-# import joblib
+import joblib
 
 # Version of this tool
 __version__ = "21.11.0"
@@ -118,9 +119,11 @@ def process_structure_core(
         "inputstructure_atoms_scaled": inputstructure_atoms_scaled,
         "inputstructure_atoms_cartesian": inputstructure_atoms_cartesian,
         "ase_version": ase.__version__,
+        "matminer_version": matminer.__version__,
+        "joblib_version": joblib.__version__,
         "tools_barebone_version": get_tools_barebone_version(),
         "this_tool_version": __version__,
-        #    "ML_predictions": False,
+        "ML_predictions": False,
     }
 
     asecell = ase_from_tuple(structure)
@@ -158,10 +161,12 @@ def process_structure_core(
     # is the number of layers in the conventional cell (e.g. when we say "Multilayer spacegroup
     # for N >= {num_layers_conventional}").
 
+    ### MOHAMMAD: Run LowDimFinder
+
     low_dim_finder = LowDimFinder(
         aiida_structure=conventional_asecell,
         vacuum_space=40.0,
-        radii_offset=-0.7,
+        radii_offset=-0.75,
         bond_margin=0.0,
         max_supercell=3,
         min_supercell=3,
@@ -171,52 +176,77 @@ def process_structure_core(
         orthogonal_axis_2D=True,
     )
 
-    if 2 in low_dim_finder.get_group_data()["dimensionality"]:
+    ### MOHAMMAD: Replace four variables (is_layered, layer_structures, layer_indices, rotated_asecell) with LowDimFinder Results!
+
+    low_dim_finder_results = low_dim_finder.get_group_data()
+
+    if 2 in low_dim_finder_results["dimensionality"]:
         is_layered = True
         from ase import Atoms
 
         layer_structures = []
         layer_indices = []
-        for i in range(len(low_dim_finder.get_group_data()["dimensionality"])):
-            if 2 == low_dim_finder.get_group_data()["dimensionality"][i]:
+        for i in range(len(low_dim_finder_results["dimensionality"])):
+            if 2 == low_dim_finder_results["dimensionality"][i]:
                 struc = Atoms(
-                    symbols=low_dim_finder.get_group_data()["chemical_symbols"][i],
-                    positions=low_dim_finder.get_group_data()["positions"][i],
-                    cell=low_dim_finder.get_group_data()["cell"][i],
-                    tags=low_dim_finder.get_group_data()["tags"][i],
+                    symbols=low_dim_finder_results["chemical_symbols"][i],
+                    positions=low_dim_finder_results["positions"][i],
+                    cell=low_dim_finder_results["cell"][i],
+                    tags=low_dim_finder_results["tags"][i],
                 )
                 layer_structures.append(struc)
                 layer_indices.append(low_dim_finder._get_unit_cell_groups()[i])
                 rotated_asecell = low_dim_finder._rotated_structures[i]
     else:
         is_layered = False
+        layer_indices = None
+        layer_structures = None
+        rotated_asecell = None
 
-    ##### MOHAMMAD: replace all the part and commented!
+    ### MOHAMMAD: Just to be consistant with before and avoid further changes!
+    ### MOHAMMAD: layer_indices must be smaller than the number of elements in a unitcell!
+    ### MOHAMMAD: For example, change: layer_indices of [[0, 4, 8, 11, 15, 19, 20, 75, 79, 84, 88, 95],
+    ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] to [[0, 4, 8, 11, 15, 19, 20, 3, 7, 12, 16, 23],
+    ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] -- In this case the number of element is 24!
+
+    if is_layered:
+        for i in range(len(layer_indices)):
+            for j in range(len(layer_indices[i])):
+                if layer_indices[i][j] >= len(conventional_asecell):
+                    tmp = layer_indices[i][j] - len(conventional_asecell)
+                    while tmp > len(conventional_asecell):
+                        tmp = tmp - len(conventional_asecell)
+                    layer_indices[i][j] = tmp
+
+    ### MOHAMMAD: replace all the components and commented!
+
     # is_layered_2, layer_structures_2, layer_indices_2, rotated_asecell_2 = find_layers(
     #     conventional_asecell
     # )
 
-    detected_hall_number = None
-    if rotated_asecell is not None:
-        # Detect Hall setting
-        for hall_number in hall_numbers_of_spacegroup[dataset["number"]]:
-            hall_dataset = get_symmetry_dataset(
-                tuple_from_ase(rotated_asecell), hall_number=hall_number
-            )
-            # print(hall_number, hall_dataset['transformation_matrix'], hall_dataset['origin_shift'])
+    #### MOHAMMAD: No Need!
 
-            # If it's Identity, we've identified the correct Hall setting (or at least one among
-            # the possible origin choices). We stop at the first one that satisfied this.
-            if (
-                np.sum(
-                    (np.eye(3) - np.array(hall_dataset["transformation_matrix"])) ** 2
-                )
-                < 1.0e-6
-            ):
-                detected_hall_number = hall_number
-                break
+    # detected_hall_number = None
+    # if rotated_asecell is not None:
+    #     # Detect Hall setting
+    #     for hall_number in hall_numbers_of_spacegroup[dataset["number"]]:
+    #         hall_dataset = get_symmetry_dataset(
+    #             tuple_from_ase(rotated_asecell), hall_number=hall_number
+    #         )
+    #         # print(hall_number, hall_dataset['transformation_matrix'], hall_dataset['origin_shift'])
 
-    return_data["hall_number"] = detected_hall_number
+    #         # If it's Identity, we've identified the correct Hall setting (or at least one among
+    #         # the possible origin choices). We stop at the first one that satisfied this.
+    #         if (
+    #             np.sum(
+    #                 (np.eye(3) - np.array(hall_dataset["transformation_matrix"])) ** 2
+    #             )
+    #             < 1.0e-6
+    #         ):
+    #             detected_hall_number = hall_number
+    #             break
+
+    # return_data["hall_number"] = detected_hall_number
 
     # Get the scaled radii for the bonds detection
     scaled_radii_per_site = get_covalent_radii_array(asecell)
@@ -256,23 +286,27 @@ def process_structure_core(
         logger.debug(json.dumps(return_data, indent=2, sort_keys=True))
         return return_data
 
-    rot, transl, center, message = find_common_transformation(
-        rotated_asecell, layer_indices
-    )
+    #### MOHAMMAD: No Need!
 
-    # Bring back atomic positions so that the origin is the center
-    # of the coincidence operation (if found) and atomic positions
-    # are inside the the unit cell in the layer plane
-    if center is not None:
-        rotated_asecell.positions -= center
-        rotated_asecell.pbc = [True, True, False]
-        rotated_asecell.positions = rotated_asecell.get_positions(wrap=True)
-        rotated_asecell.pbc = [True, True, True]
-        for layer in layer_structures:
-            layer.positions -= center
-            layer.pbc = [True, True, False]
-            layer.positions = layer.get_positions(wrap=True)
-            layer.pbc = [True, True, True]
+    # rot, transl, center, message = find_common_transformation(
+    #     rotated_asecell, layer_indices
+    # )
+
+    #### MOHAMMAD: No Need!
+
+    # # Bring back atomic positions so that the origin is the center
+    # # of the coincidence operation (if found) and atomic positions
+    # # are inside the the unit cell in the layer plane
+    # if center is not None:
+    #     rotated_asecell.positions -= center
+    #     rotated_asecell.pbc = [True, True, False]
+    #     rotated_asecell.positions = rotated_asecell.get_positions(wrap=True)
+    #     rotated_asecell.pbc = [True, True, True]
+    #     for layer in layer_structures:
+    #         layer.positions -= center
+    #         layer.pbc = [True, True, False]
+    #         layer.positions = layer.get_positions(wrap=True)
+    #         layer.pbc = [True, True, True]
 
     layer_xsfs = [
         get_xsf_structure(tuple_from_ase(layer_structure))
@@ -308,27 +342,37 @@ def process_structure_core(
         ],
     }
 
-    # featurizer = MultipleFeaturizer(
-    #     [
-    #         ChemicalOrdering(),
-    #         MaximumPackingEfficiency(),
-    #         SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
-    #     ]
-    # )
+    ### MOHAMMAD: Here we generate features for the strucutres that passed the LowDimFinder
 
-    # structures_pg = AseAtomsAdaptor.get_structure(conventional_asecell)
+    featurizer = MultipleFeaturizer(
+        [
+            ChemicalOrdering(),
+            MaximumPackingEfficiency(),
+            SiteStatsFingerprint.from_preset("LocalPropertyDifference_ward-prb-2017"),
+        ]
+    )
 
-    # list_structures = {}
-    # list_structures[1] = structures_pg
+    structures_pg = AseAtomsAdaptor.get_structure(conventional_asecell)
 
-    # X = featurizer.featurize_many(list(list_structures.values()), ignore_errors=True)
+    list_structures = {}
+    list_structures["structure"] = structures_pg
 
-    # loaded_RF = joblib.load("./../model/random_forest_model.joblib")
+    X = featurizer.featurize_many(list(list_structures.values()), ignore_errors=True)
 
-    # pred_RF = loaded_RF.predict(X)
+    ### MOHAMMAD: Load the trained model
 
-    # if pred_RF == [1]:
-    #    return_data["ML_predictions"] = True
+    loaded_RF = joblib.load(
+        "/home/app/code/webservice/static/random_forest_model.joblib"
+    )
+
+    ### MOHAMMAD: make prediction!
+
+    pred_RF = loaded_RF.predict(X)
+
+    if pred_RF == [1]:
+        return_data["ML_predictions"] = True
+    else:
+        return_data["ML_predictions"] = False
 
     # I return here; some sections will not be present in the output so they will not be shown.
     compute_time = time.time() - start_time
