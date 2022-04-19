@@ -24,7 +24,10 @@ from .utils.structures import (
 from tools_barebone import get_tools_barebone_version
 from .utils.hall import hall_numbers_of_spacegroup
 from .utils.layers import find_layers, find_common_transformation
-from .utils.lowdimfinder import LowDimFinder
+from .utils.lowdimfinder import (
+    LowDimFinder,
+    _map_atomic_number_radii_van_der_Waals_alvarez,
+)
 from .utils.pointgroup import (
     pg_number_from_hm_symbol,
     prepare_pointgroup,
@@ -251,7 +254,20 @@ def process_structure_core(
     # return_data["hall_number"] = detected_hall_number
 
     # Get the scaled radii for the bonds detection
-    scaled_radii_per_site = get_covalent_radii_array(asecell)
+
+    ### MOHAMMAD: Used vdW radii in order to draw bonds by visualizer
+
+    scaled_radii_per_site = np.array(
+        [
+            _map_atomic_number_radii_van_der_Waals_alvarez.get(atom.number)
+            for atom in asecell
+        ]
+    )
+
+    ### MOHAMMAD: No need anymore!
+
+    # scaled_radii_per_site = get_covalent_radii_array(asecell)
+
     # This is a dict of the form {"Na": 1.3, "C": 1.5}, ..
     scaled_radii_per_kind = {
         atom.symbol: scaled_radius
@@ -267,6 +283,9 @@ def process_structure_core(
     # "connect 0.2 2.27 {_Ga} {_As};"
     # It is good to prepend this with "set autobond off;" before loading, or use first a "connect delete;" to remove
     # existing bonds
+
+    ### MOHAMMAD: Add offset to the vdw radii
+
     jsmol_bond_commands = []
     min_bonding_distance = 0.2  # ang
     for kind1, radius1 in scaled_radii_per_kind.items():
@@ -275,7 +294,7 @@ def process_structure_core(
                 # Just do one of the two pairs
                 continue
             jsmol_bond_commands.append(
-                f"connect {min_bonding_distance} {radius1+radius2} {{_{kind1}}} {{_{kind2}}}; "
+                f"connect {min_bonding_distance} {radius1+radius2+2*radiiOffset} {{_{kind1}}} {{_{kind2}}}; "
             )
 
     # Encode as JSON string before sending, so it's safe to inject in the code
