@@ -5,7 +5,9 @@ A tool to find layers (and low-dimensional structures) within a bulk 3D structur
 
 ## About the tool
 
-TO UPDATE!
+This tool allows users to upload the bulk crystal structure in several standard formats (or to choose from a few examples), and then layered structures are identified based on geometrical criteria. Finally, after generating features vectors representing the crystal structure, the tool uses a machine learning model to see if the crystal structure can be exfoliated or have high binding energy.
+
+The demonstrated outcome page includes relevant information on the structure (interactive visualizations of the bulk multilayer) and whether the structure is suitable for exfoliation or not. If yes, the corresponding two-dimensional materials are displayed.
 
 ## Online version
 This tool is deployed on the Materials Cloud "Tools" section [here](https://ml-layer-finder.materialscloud.io/), so you can use it without need of installation.
