@@ -214,14 +214,23 @@ def process_structure_core(
     ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] to [[0, 4, 8, 11, 15, 19, 20, 3, 7, 12, 16, 23],
     ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] -- In this case the number of element is 24!
 
+    ###if is_layered:
+    ###    for i in range(len(layer_indices)):
+    ###        for j in range(len(layer_indices[i])):
+    ###            if layer_indices[i][j] >= len(conventional_asecell):
+    ###                tmp = layer_indices[i][j] - len(conventional_asecell)
+    ###                while tmp > len(conventional_asecell):
+    ###                    tmp = tmp - len(conventional_asecell)
+    ###                layer_indices[i][j] = tmp
+
+    ### MOHAMMAD: More efficient way:
+
     if is_layered:
         for i in range(len(layer_indices)):
             for j in range(len(layer_indices[i])):
                 if layer_indices[i][j] >= len(conventional_asecell):
-                    tmp = layer_indices[i][j] - len(conventional_asecell)
-                    while tmp > len(conventional_asecell):
-                        tmp = tmp - len(conventional_asecell)
-                    layer_indices[i][j] = tmp
+                    tmp = layer_indices[i][j]
+                    layer_indices[i][j] = tmp % len(conventional_asecell)
 
     ### MOHAMMAD: replace all the components and commented!
 
