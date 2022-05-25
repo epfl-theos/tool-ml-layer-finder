@@ -37,6 +37,7 @@ VALID_EXAMPLES = {
 logger = logging.getLogger("tool-ml-layer-finder-tool-app")
 blueprint = flask.Blueprint("compute", __name__, url_prefix="/compute")
 
+
 @blueprint.route("/process_structure/", methods=["GET", "POST"])
 def process_structure():
     if flask.request.method == "POST":
@@ -109,12 +110,19 @@ def process_example_structure():
         # I expect that the valid_examples dictionary already filters only
         # existing files, so I don't try/except here
         with open(
-            os.path.join(os.path.dirname(__file__), "xsf-examples", filename,)
+            os.path.join(
+                os.path.dirname(__file__),
+                "xsf-examples",
+                filename,
+            )
         ) as structurefile:
             filecontent = structurefile.read()
 
         try:
-            structure = parse_structure(filecontent=filecontent, fileformat=fileformat,)
+            structure = parse_structure(
+                filecontent=filecontent,
+                fileformat=fileformat,
+            )
         except Exception as exc:
             flask.flash(
                 "Unable to parse the example structure, sorry... ({}, {})".format(
@@ -125,9 +133,7 @@ def process_example_structure():
 
         try:
             data_for_template = process_structure_core(
-                structure=structure,
-                logger=logger,
-                flask_request=flask.request
+                structure=structure, logger=logger, flask_request=flask.request
             )
             config = get_config()
             tvars = header.template_vars
