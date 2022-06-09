@@ -1,29 +1,24 @@
 import json
 import math
 import time
-import string
 
 import ase
 import ase.io
 import numpy as np
-from ase.data import chemical_symbols
 import spglib
 
-from collections.abc import Iterable
+from ase import Atoms
+from ase.data import chemical_symbols
 
 from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from spglib.spglib import get_symmetry_dataset
 
 from .utils.structures import (
     ase_from_tuple,
     get_xsf_structure,
     tuple_from_ase,
-    get_covalent_radii_array,
 )
 from tools_barebone import get_tools_barebone_version
-from .utils.hall import hall_numbers_of_spacegroup
-from .utils.layers import find_layers, find_common_transformation
 from .utils.lowdimfinder import (
     LowDimFinder,
     _map_atomic_number_radii_van_der_Waals_alvarez,
@@ -186,12 +181,11 @@ def process_structure_core(
 
         if 2 in low_dim_finder_results["dimensionality"]:
             is_layered = True
-            from ase import Atoms
 
             layer_structures = []
             layer_indices = []
             for i in range(len(low_dim_finder_results["dimensionality"])):
-                if 2 == low_dim_finder_results["dimensionality"][i]:
+                if low_dim_finder_results["dimensionality"][i] == 2:
                     struc = Atoms(
                         symbols=low_dim_finder_results["chemical_symbols"][i],
                         positions=low_dim_finder_results["positions"][i],
@@ -199,10 +193,16 @@ def process_structure_core(
                         tags=low_dim_finder_results["tags"][i],
                     )
                     layer_structures.append(struc)
-                    layer_indices.append(low_dim_finder._get_unit_cell_groups()[i])
-                    rotated_asecell = low_dim_finder._rotated_structures[i]
+                    layer_indices.append(
+                        low_dim_finder._get_unit_cell_groups()[  # pylint: disable=protected-access
+                            i
+                        ]
+                    )
+                    rotated_asecell = low_dim_finder._rotated_structures[  # pylint: disable=protected-access
+                        i
+                    ]
             break
-        elif radiiOffset == -0.55:
+        if radiiOffset == -0.55:
             is_layered = False
             layer_indices = None
             layer_structures = None
@@ -226,7 +226,7 @@ def process_structure_core(
     ### MOHAMMAD: More efficient way:
 
     if is_layered:
-        for i in range(len(layer_indices)):
+        for i in range(len(layer_indices)):  # pylint: disable=consider-using-enumerate
             for j in range(len(layer_indices[i])):
                 if layer_indices[i][j] >= len(conventional_asecell):
                     tmp = layer_indices[i][j]

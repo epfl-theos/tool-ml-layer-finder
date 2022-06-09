@@ -14,6 +14,13 @@ __license__ = (
 )
 __version__ = "0.3.0"
 
+import numpy as np
+
+from ase import Atoms
+from numpy import isscalar
+from numbers import Number
+
+
 ## Source: http://chemwiki.ucdavis.edu/Reference/Reference_Tables/Atomic_and_Molecular_Properties/A3%3A_Covalent_Radii
 # http://dx.doi.org/10.1039/b801115j, checked in paper
 _map_atomic_number_radii_cordero = {
@@ -470,15 +477,11 @@ class WeirdStructureExc(LowDimFinderExc):
     Raised when a weird structure, which the LowDimfinder cannot handle, is found.
     """
 
-    pass
-
 
 class GroupOverTwoCellsNoConnectionsExc(LowDimFinderExc):
     """
     Raised when the group expands over at least two cells, but no connection is found.
     """
-
-    pass
 
 
 class NoRadiiListExc(LowDimFinderExc):
@@ -487,7 +490,7 @@ class NoRadiiListExc(LowDimFinderExc):
     """
 
 
-class LowDimFinder(object):
+class LowDimFinder:
     """
     Take an aiida_structure, analyse the structure and return all bonded groups of atoms.
 
@@ -497,7 +500,7 @@ class LowDimFinder(object):
       each radius (before using the margin above) (default: 0).
       In the end, the criterion which defines if atoms are bonded or not is
       that two atoms X1 and X2 are bonded if their distance is smaller than
-      :math:`[R(X1) + R(X2) + 2\\text{radii\_offset}] \\cdot (1 + \\text{bond\_margin})`,
+      :math:`[R(X1) + R(X2) + 2\\text{radii_offset}] \\cdot (1 + \\text{bond_margin})`,
       where :math:`R(X)` denotes the radius of a species X.
     :param radii_source: Can be either ``cordero`` (default), ``pyykko``,
         ``vdw`` (for Batsanov van der Walls radii), or ``alvarez``
@@ -598,15 +601,12 @@ class LowDimFinder(object):
             if k in self.params.keys():
                 self.params[k] = v
 
-    def _define_groups(self):
+    def _define_groups(self):  # pylint: disable=too-many-locals
         """
         Return the different groups found in the cell.
         """
         # import time
         # start_time = time.time()
-
-        import numpy as np
-
         n_sc = len(self.supercell)
         # get distances between all the atoms
         coords = self.supercell.get_positions()
@@ -646,7 +646,7 @@ class LowDimFinder(object):
         groups = []
 
         # I run over all atoms
-        for atom in range(len(set_list)):
+        for atom in range(len(set_list)):  # pylint: disable=consider-using-enumerate
             # atom not in visited --> new atom group
             if atom not in visited:
                 # fresh set of connected atoms.
@@ -768,7 +768,7 @@ class LowDimFinder(object):
 
             self._define_number_of_connections()
 
-    def _define_dimensionality(self):
+    def _define_dimensionality(self):  # pylint: disable=too-many-locals
         """
         Vectors are defined between the connected periodic positions of the group.
         The rank
@@ -780,7 +780,6 @@ class LowDimFinder(object):
             vector created
         3D: Takes the vectors of input structure
         """
-        import numpy as np
 
         def l_are_equals(a, b):
             # function to compare lengths
@@ -811,10 +810,16 @@ class LowDimFinder(object):
 
         elif self._dimensionality[self._low_dim_index] == 1:
             idx = find_shortest_vector(vectors)
-            normal_vector1 = np.cross(vectors[idx], [1, 0, 0])
+            normal_vector1 = np.cross(
+                vectors[idx], [1, 0, 0]  # pylint: disable=invalid-sequence-index
+            )
             if np.linalg.norm(normal_vector1) < 0.000001:
-                normal_vector1 = np.cross(vectors[idx], [0, 1, 0])
-            normal_vector2 = np.cross(vectors[idx], normal_vector1)
+                normal_vector1 = np.cross(
+                    vectors[idx], [0, 1, 0]  # pylint: disable=invalid-sequence-index
+                )
+            normal_vector2 = np.cross(
+                vectors[idx], normal_vector1  # pylint: disable=invalid-sequence-index
+            )
             normal_vector1 = normal_vector1 / np.linalg.norm(normal_vector1)
             normal_vector2 = normal_vector2 / np.linalg.norm(normal_vector2)
             self._vectors.append([normal_vector1, normal_vector2, vectors[0]])
@@ -868,14 +873,13 @@ class LowDimFinder(object):
         elif self._dimensionality[self._low_dim_index] == 3:
             self._vectors.append(self.structure.cell)
 
-    def _define_reduced_ase_structure(self):
+    def _define_reduced_ase_structure(
+        self,
+    ):  # pylint: disable=too-many-branches,too-many-statements,too-many-locals
         """
         Append the reduced group of atoms corresponding to the currently analysed group
         to the list of reduced ase structures.
         """
-        from ase import Atoms
-        import numpy as np
-
         min_z = None
         max_z = None
         min_x = None
@@ -906,7 +910,7 @@ class LowDimFinder(object):
 
             return
 
-        elif self._get_dimensionality()[self._low_dim_index] == 2:
+        if self._get_dimensionality()[self._low_dim_index] == 2:
             # get positions and chemical symbols
             for i in self._get_unit_cell_groups()[self._low_dim_index]:
                 positions.append(
@@ -1153,11 +1157,9 @@ class LowDimFinder(object):
             # replica of an existing low dimensionality
             # group, the group is skipped and the next one is analysed..
             if unit_cell_group.issubset(self._found_unit_cell_atoms):
-
                 continue
-            else:
-                self._define_reduced_ase_structure()
-                self._low_dim_index = self._low_dim_index + 1
+            self._define_reduced_ase_structure()
+            self._low_dim_index = self._low_dim_index + 1
         self._low_dim_index = self._low_dim_index - 1
 
     def _define_reduced_aiida_structures(self):
@@ -1182,8 +1184,6 @@ class LowDimFinder(object):
         :param asestruc: unrotated reduced ASE structure
         :return: rotated ASE original and reduced structures
         """
-        import numpy as np
-
         if self.params["orthogonal_axis_2D"]:
             originalstruc.rotate(
                 v=asestruc.cell[2], a=[0, 0, 1], center=(0, 0, 0), rotate_cell=True
@@ -1235,8 +1235,6 @@ class LowDimFinder(object):
         :param asestruc: unrotated reduced ASE structure
         :return: rotated ASE structure
         """
-        import numpy as np
-
         if self.params["orthogonal_axis_2D"]:
             asestruc.rotate(
                 v=asestruc.cell[2], a=[0, 0, 1], center=(0, 0, 0), rotate_cell=True
@@ -1388,8 +1386,9 @@ class LowDimFinder(object):
         Define 3D structures with the same lattice as the layers for all
         2D reduced structures found.
         """
-        from aiida.plugins import DataFactory
-        from ase import Atoms
+        from aiida.plugins import (  # pylint:disable=import-error,import-outside-toplevel
+            DataFactory,  # pylint:disable=import-error,import-outside-toplevel
+        )
 
         S = DataFactory("structure")
         _ = self.get_reduced_aiida_structures()
@@ -1465,13 +1464,13 @@ def find_shortest_vector(array):
     :param array: array of vectors
     :return idx: the index of the shortest vector in the array
     """
-    import numpy as np
-
     idx = np.array([np.linalg.norm(vector) for vector in array]).argmin()
     return idx
 
 
-def get_bonded_pairs(coords, radii_array, factor=1.0, use_scipy=True):
+def get_bonded_pairs(
+    coords, radii_array, factor=1.0, use_scipy=True
+):  # pylint: disable=too-many-locals
     """
     Get the list of pairs of connected atoms in the cell.
     (i, j) in the list means atom i and atom j are connected.
@@ -1487,11 +1486,9 @@ def get_bonded_pairs(coords, radii_array, factor=1.0, use_scipy=True):
 
     :return: pairs of connected atoms
     """
-    import numpy as np
-
     if use_scipy:
         try:
-            import scipy.spatial
+            import scipy.spatial  # pylint: disable=import-outside-toplevel
 
             tree = scipy.spatial.cKDTree(coords)
         except (ImportError, AttributeError):
@@ -1516,17 +1513,15 @@ def get_bonded_pairs(coords, radii_array, factor=1.0, use_scipy=True):
                 ((coords1 - coords2) ** 2).sum(axis=1) - (rad1 + rad2) ** 2 < 0.0
             )
             return np.array(pairs)[pairs_idx[0]]
-        else:
-            return []
+        return []
 
-    else:
-        # Get the squared_distances between to lists of cartesian coordinates.
-        # matrix(i, j) contains the squared distance between atom i and atom j.
-        matrix = (coords[:, None, :] - coords[None, :, :]) ** 2
-        dist_squared = np.sum(matrix, axis=2)
-        radii_matrix = (radii_array + radii_array[:, None]) * factor
-        pairs = zip(*np.nonzero(dist_squared - radii_matrix**2 < 0))
-        return [pair for pair in pairs if pair[0] < pair[1]]
+    # Get the squared_distances between to lists of cartesian coordinates.
+    # matrix(i, j) contains the squared distance between atom i and atom j.
+    matrix = (coords[:, None, :] - coords[None, :, :]) ** 2
+    dist_squared = np.sum(matrix, axis=2)
+    radii_matrix = (radii_array + radii_array[:, None]) * factor
+    pairs = zip(*np.nonzero(dist_squared - radii_matrix**2 < 0))
+    return [pair for pair in pairs if pair[0] < pair[1]]
 
 
 def numbers_are_equal(a, b, epsilon=1e-14):
@@ -1550,18 +1545,13 @@ def scalars_are_equal(a, b, **kwargs):
     :return: boolean
     :raise: NonscalarError if either a or b is a list, an array or a dictionary
     """
-    from numpy import isscalar
-    from numbers import Number
-
     if isscalar(a) and isscalar(b):
         if isinstance(a, Number):
             return isinstance(b, Number) and numbers_are_equal(a, b, **kwargs)
-        else:
-            return a == b
-    elif (a is None) or (b is None):
         return a == b
-    else:
-        raise TypeError("a and b must be scalars")
+    if (a is None) or (b is None):
+        return a == b
+    raise TypeError("a and b must be scalars")
 
 
 def objects_set(objects, **kwargs):
@@ -1594,8 +1584,6 @@ def objects_are_equal(obj1, obj2, **kwargs):
     :param kwargs: parameters passed to the function scalars_are_equal
     :return: boolean
     """
-    import numpy as np
-
     if isinstance(obj1, dict):
         if not isinstance(obj2, dict):
             return False
@@ -1609,13 +1597,8 @@ def objects_are_equal(obj1, obj2, **kwargs):
             return False
         return True
 
-    elif isinstance(obj1, list) or (
-        isinstance(obj1, np.ndarray) or isinstance(obj1, tuple)
-    ):
-        if not (
-            isinstance(obj2, list)
-            or (isinstance(obj2, np.ndarray) or isinstance(obj2, tuple))
-        ):
+    if isinstance(obj1, (list, np.ndarray, tuple)):
+        if not isinstance(obj2, (list, np.ndarray, tuple)):
             return False
         if len(obj1) != len(obj2):
             return False
@@ -1623,15 +1606,14 @@ def objects_are_equal(obj1, obj2, **kwargs):
             if np.isscalar(e1):
                 if not np.isscalar(e2):
                     return False
-                elif not scalars_are_equal(e1, e2, **kwargs):
+                if not scalars_are_equal(e1, e2, **kwargs):
                     return False
             else:
                 if not objects_are_equal(e1, e2, **kwargs):
                     return False
         return True
 
-    else:
-        try:
-            return scalars_are_equal(obj1, obj2, **kwargs)
-        except TypeError:
-            raise TypeError("Type of obj1 and obj2 not recognized")
+    try:
+        return scalars_are_equal(obj1, obj2, **kwargs)
+    except TypeError:
+        raise TypeError("Type of obj1 and obj2 not recognized")
