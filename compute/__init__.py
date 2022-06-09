@@ -26,9 +26,11 @@ VALID_EXAMPLES = {
     "blackP": "P-904c1f0e-da23-42f0-95b4-a4fee98e6d04_structure.xsf",
     "graphite": "graphite-544d62e4-8ebe-404c-aa17-b99be62ea70b.xsf",
     "BN": "BN-P6_3mmc-f7e2ff32-27ed-4c89-9c3c-4acbaffbb897.xsf",
-    "PtO2(P6_3mc)": "PtO2-P6_3mc-ICSD24923.xsf",
-    "PtO2(P-3m1)": "PtO2-P-3m1-ICSD6431.xsf",
-    "BiTeCl": "BiTeCl-ICSD79362-category-II.xsf",
+    "Sr2Nb5O9": "Sr2Nb5O9-866e918e-7a5f-41e3-980e-038852391b5a_structure.xsf",
+    "KGaSe2": "KGaSe2-1e35f667-92e1-4b90-bfc8-daf3c5d1f7b0_structure.xsf",
+    "Na2TiS2O": "Na2TiS2O-8d5eb648-9aa3-409f-9e72-861e38e11f30_structure.xsf",
+    "B2N2": "B2N2-8f2e38e9-01d5-4208-adaf-daa461ac8139_structure.xsf",
+    "AgBiTe3": "AgBiTe3-0bddefb1-3b12-4d9b-bd77-2491d5d9fdb9_structure.xsf",
 }
 
 logger = logging.getLogger("tool-ml-layer-finder-tool-app")

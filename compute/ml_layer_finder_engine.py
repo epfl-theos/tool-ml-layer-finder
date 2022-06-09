@@ -214,15 +214,6 @@ def process_structure_core(
     ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] to [[0, 4, 8, 11, 15, 19, 20, 3, 7, 12, 16, 23],
     ### MOHAMMAD: [1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21, 22]] -- In this case the number of element is 24!
 
-    ###if is_layered:
-    ###    for i in range(len(layer_indices)):
-    ###        for j in range(len(layer_indices[i])):
-    ###            if layer_indices[i][j] >= len(conventional_asecell):
-    ###                tmp = layer_indices[i][j] - len(conventional_asecell)
-    ###                while tmp > len(conventional_asecell):
-    ###                    tmp = tmp - len(conventional_asecell)
-    ###                layer_indices[i][j] = tmp
-
     ### MOHAMMAD: More efficient way:
 
     if is_layered:
@@ -234,34 +225,6 @@ def process_structure_core(
 
     ### MOHAMMAD: replace all the components and commented!
 
-    # is_layered_2, layer_structures_2, layer_indices_2, rotated_asecell_2 = find_layers(
-    #     conventional_asecell
-    # )
-
-    #### MOHAMMAD: No Need!
-
-    # detected_hall_number = None
-    # if rotated_asecell is not None:
-    #     # Detect Hall setting
-    #     for hall_number in hall_numbers_of_spacegroup[dataset["number"]]:
-    #         hall_dataset = get_symmetry_dataset(
-    #             tuple_from_ase(rotated_asecell), hall_number=hall_number
-    #         )
-    #         # print(hall_number, hall_dataset['transformation_matrix'], hall_dataset['origin_shift'])
-
-    #         # If it's Identity, we've identified the correct Hall setting (or at least one among
-    #         # the possible origin choices). We stop at the first one that satisfied this.
-    #         if (
-    #             np.sum(
-    #                 (np.eye(3) - np.array(hall_dataset["transformation_matrix"])) ** 2
-    #             )
-    #             < 1.0e-6
-    #         ):
-    #             detected_hall_number = hall_number
-    #             break
-
-    # return_data["hall_number"] = detected_hall_number
-
     # Get the scaled radii for the bonds detection
 
     ### MOHAMMAD: Used vdW radii in order to draw bonds by visualizer
@@ -272,10 +235,6 @@ def process_structure_core(
             for atom in asecell
         ]
     )
-
-    ### MOHAMMAD: No need anymore!
-
-    # scaled_radii_per_site = get_covalent_radii_array(asecell)
 
     # This is a dict of the form {"Na": 1.3, "C": 1.5}, ..
     scaled_radii_per_kind = {
@@ -315,28 +274,6 @@ def process_structure_core(
         return_data["compute_time"] = compute_time
         logger.debug(json.dumps(return_data, indent=2, sort_keys=True))
         return return_data
-
-    #### MOHAMMAD: No Need!
-
-    # rot, transl, center, message = find_common_transformation(
-    #     rotated_asecell, layer_indices
-    # )
-
-    #### MOHAMMAD: No Need!
-
-    # # Bring back atomic positions so that the origin is the center
-    # # of the coincidence operation (if found) and atomic positions
-    # # are inside the the unit cell in the layer plane
-    # if center is not None:
-    #     rotated_asecell.positions -= center
-    #     rotated_asecell.pbc = [True, True, False]
-    #     rotated_asecell.positions = rotated_asecell.get_positions(wrap=True)
-    #     rotated_asecell.pbc = [True, True, True]
-    #     for layer in layer_structures:
-    #         layer.positions -= center
-    #         layer.pbc = [True, True, False]
-    #         layer.positions = layer.get_positions(wrap=True)
-    #         layer.pbc = [True, True, True]
 
     layer_xsfs = [
         get_xsf_structure(tuple_from_ase(layer_structure))
@@ -387,7 +324,9 @@ def process_structure_core(
     list_structures = {}
     list_structures["structure"] = structures_pg
 
-    X = featurizer.featurize_many(list(list_structures.values()), ignore_errors=True)
+    print(structures_pg)
+    X = featurizer.featurize_many([structures_pg], ignore_errors=True)
+    print(X)
 
     ### MOHAMMAD: Load the trained model
 
