@@ -1,15 +1,12 @@
-import json
 import logging
 import os
-import time
 import traceback
 
 import flask
-import numpy as np
 
 from .ml_layer_finder_engine import process_structure_core
 from .utils.structures import parse_structure
-from .utils.response import make_response, FlaskRedirectException
+from .utils.response import FlaskRedirectException
 
 # Ignoring the import error because it's from tools-barebone
 # Not ideal, but works for now

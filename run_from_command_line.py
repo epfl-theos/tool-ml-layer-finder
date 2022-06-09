@@ -19,9 +19,7 @@ def run_from_command_line(filename):
 
     asecell = ase.io.read(filename)
     structure = tuple_from_ase(asecell)
-    return_data = process_structure_core(
-        structure, logger, flask_request=None
-    )
+    return_data = process_structure_core(structure, logger, flask_request=None)
     print("RETURN DATA:", return_data)
 
 
