@@ -46,6 +46,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
+        pip install -r tool-requirements.txt
         pip install -r .ci/dev-requirements.txt
         pip freeze
 
