@@ -171,19 +171,24 @@
 
             <div id='machinelearningtitle'>
                 <h2>
-                    <center>Prediction based on the machine learning model</center>
+                    <center>Prediction based on the machine-learning model</center>
                 </h2>
             </div>
 
             {% if ML_predictions %}
-            The strucutre can be exfoliated.
+            <div
+            style="border: 1px solid #005a32; border-radius: 6px; padding: 20px; margin: 30px; background-color: #edf8e9;">
+            Our random-forest-classifier model predicts that the structure has a <strong>low binding energy</strong>, and thus it might be exfoliable.
             {% else %}
-            The structure has a high binding energy.
+            <div
+            style="border: 1px solid #99000d; border-radius: 6px; padding: 20px; margin: 30px; background-color: #fee5d9;">
+            Our random-forest-classifier model predicts that the structure has a <strong>high binding energy</strong>, and thus it might be non-exfoliable.
             {% endif %}
+            </div>
 
-            {% else %}
-            No layers could be found for this structure.
-            {% endif %}
+        {% else %}
+        No layers could be found for this structure.
+        {% endif %}
 
         </div>
 
@@ -193,7 +198,9 @@
             <div
                 style="border: 1px solid #aaa;border-radius: 6px;margin-left: -5px;padding: 5px;margin-right: -5px;margin-bottom: 15px;padding-bottom: 0;background-color: #ededed;">
                 <p><strong>How to cite:</strong> If you use this tool, please cite:<br>
-                    <strong>TO BE UPDATED</strong>.
+                    <strong>M. T. Vahdat, K. A. Varoon, and G. Pizzi,
+                        <em>Machine-learning accelerated identification of exfoliable two-dimensional materials</em>, submitted (2022).
+                    </strong>
                 </p>
             </div>
             <p>Found a bug or have a suggestion? Please <a
