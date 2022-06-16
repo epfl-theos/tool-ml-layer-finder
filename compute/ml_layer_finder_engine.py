@@ -5,7 +5,9 @@ import time
 import ase
 import ase.io
 import numpy as np
+import shap
 import spglib
+
 
 from ase import Atoms
 from ase.data import chemical_symbols
@@ -333,15 +335,19 @@ def process_structure_core(
     loaded_RF = joblib.load(
         "/home/app/code/webservice/static/random_forest_model.joblib"
     )
+    explainer = shap.Explainer(loaded_RF)
 
     ### MOHAMMAD: make prediction!
-
     pred_RF = loaded_RF.predict(X)
-
     if pred_RF == [1]:
         return_data["ML_predictions"] = True
     else:
         return_data["ML_predictions"] = False
+
+    # Also get the SHAP values
+    shap_values = explainer(np.array(X))
+    print(shap_values)
+    # return_data["shap_values"] = shap_values
 
     # I return here; some sections will not be present in the output so they will not be shown.
     compute_time = time.time() - start_time

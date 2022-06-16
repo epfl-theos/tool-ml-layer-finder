@@ -5,9 +5,9 @@ A tool to find layers (and low-dimensional structures) within a bulk 3D structur
 
 ## About the tool
 
-This tool allows users to upload the bulk crystal structure in several standard formats (or to choose from a few examples), and then layered structures are identified based on geometrical criteria. Finally, after generating features vectors representing the crystal structure, the tool uses a machine learning model to see if the crystal structure can be exfoliated or have high binding energy.
+This tool allows users to upload the bulk crystal structure in several standard formats (or to choose from a few examples), and then layered structures are identified based on geometrical criteria. Finally, after generating features vectors representing the crystal structure, the tool uses a machine-learning model to see if the crystal structure can be exfoliated or have high binding energy.
 
-The demonstrated outcome page includes relevant information on the structure (interactive visualizations of the bulk multilayer) and whether the structure is suitable for exfoliation or not. If yes, the corresponding two-dimensional materials are displayed.
+The output page includes relevant information on the structure (interactive visualizations of the bulk multilayer) and whether the structure is suitable for exfoliation or not based on the geometrical criteria. If yes, the corresponding two-dimensional layers are displayed. In addition, the machine-learning model is run to predict if the structure might actually have a low binding energy, and results are displayed.
 
 ## Online version
 This tool is deployed on the Materials Cloud "Tools" section [here](https://ml-layer-finder.materialscloud.io/), so you can use it without need of installation.
@@ -15,9 +15,9 @@ This tool is deployed on the Materials Cloud "Tools" section [here](https://ml-l
 ## How to cite
 If you use this tool, please cite the following work:
 
-* ...
+* **M. T. Vahdat, K. A. Varoon, and G. Pizzi, *Machine-learning accelerated identification of exfoliable two-dimensional materials*, submitted (2022).**
 
-You might also want to cite the ASE, pymatgen and matminer libraries that are used internally by the tool.
+You might also want to cite the [ASE](https://wiki.fysik.dtu.dk/ase/), [pymatgen](http://pymatgen.org), [matminer](https://github.com/hackingmaterials/matminer) and [shap](https://shap.readthedocs.io/) libraries that are used internally by the tool, as well as <a href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>, <em>Two-dimensional materials from high-throughput computational exfoliation of experimentally known compounds</em>, Nature Nanotech. 13, 246-252 (2018)</a> where the geometrical-screening code was originally developed, and from which the DFT data for the binding energies was extracted to train our model.
 
 ## How to deploy on your computer
 1. Install [Docker](https://www.docker.com)

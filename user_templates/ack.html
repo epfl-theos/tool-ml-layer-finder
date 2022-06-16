@@ -1,6 +1,11 @@
 <p>This tool uses the <a href="https://wiki.fysik.dtu.dk/ase/" target="_blank">ASE</a> and
-    <a href="https://pymatgen.org" target="_blank">pymatgen</a> libraries for structure manipulation,
-    and <a href="https://github.com/hackingmaterials/matminer" target="_blank">matminer</a> for feature generation.
+    <a href="https://pymatgen.org" target="_blank">pymatgen</a> libraries for structure manipulation, <a href="https://github.com/hackingmaterials/matminer" target="_blank">matminer</a> for feature generation, and <a href="https://shap.readthedocs.io/"
+    target="_blank">shap</a> for model explanation.
+</p>
+<p>
+    The tool uses the <em>lowdimfinder</em> code for the initial geometrical analysis, originally developed in <a href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>, <em>Two-dimensional materials from high-throughput computational exfoliation of experimentally known compounds</em>, Nature Nanotech. 13, 246-252 (2018)</a>. The DFT data for the binding energies used to train our ML model was also extracted from the same paper.
+</p>
+<p>
     The tool is based upon the <a href="https://github.com/materialscloud-org/tools-barebone"
         target="_blank">tools-barebone</a> framework
     developed by the Materials Cloud team.

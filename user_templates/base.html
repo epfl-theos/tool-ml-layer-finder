@@ -175,6 +175,15 @@
                 </h2>
             </div>
 
+            <div>
+                <p>
+                    The trained machine learning model (a random forest classifier) identifies bulk compounds that can be exfoliated into 2D materials. <br>
+                    The model has a high recall of 98% (i.e., an extremely low number of false negatives), which means the model might discard only very few materials that are actually exfoliable.
+                    At the same time, it significantly reduces the number of candidates that need to be sent to more accurate but expensive filtering steps (e.g., by computing binding energies using DFT), thus significantly lowering the total workflow computational cost. <br>
+                    The model was trained with DFT binding-energy results from the following paper: <a href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>, Nature Nanotech. 13, 246-252 (2018)</a>.
+                </p>
+            </div>
+
             {% if ML_predictions %}
             <div
             style="border: 1px solid #005a32; border-radius: 6px; padding: 20px; margin: 30px; background-color: #edf8e9;">
@@ -185,6 +194,8 @@
             Our random-forest-classifier model predicts that the structure has a <strong>high binding energy</strong>, and thus it might be non-exfoliable.
             {% endif %}
             </div>
+        
+            <!--<div>SHAP VALUES: {{shap_values}}</div>-->
 
         {% else %}
         No layers could be found for this structure.
@@ -215,9 +226,8 @@
                 <a href="https://github.com/joblib/joblib" target="_blank">joblib</a> version: {{ joblib_version }}.
                 <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a>
                 version: {{tools_barebone_version}}.
-                This tool version: {{this_tool_version}}.
+                <a href="https://github.com/epfl-theos/tool-ml-layer-finder" target="_blank">This tool (tool-ml-layer-finder)</a> version: {{this_tool_version}}.
         </div>
-
 
     </div>
     {% if has_common_layers %}

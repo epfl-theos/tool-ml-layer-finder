@@ -1,5 +1,3 @@
-### matminer
-matminer
-### joblib
-joblib
-
+matminer~=0.7.8
+joblib~=1.1.0
+shap~=0.41.0
