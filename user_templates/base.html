@@ -195,7 +195,39 @@
             {% endif %}
             </div>
         
-            <!--<div>SHAP VALUES: {{shap_values}}</div>-->
+            <h3>
+                <center>Feature importance</center>
+            </h3>
+            <div>
+                <p>
+                    We summarise below the results of a SHapely Additive exPlanations (SHAP) analysis obtained using the <a href="https://shap.readthedocs.io" target="_blank">shap</a> library,
+                    that helps to explain the most relevant features.<br>
+                    We show the absolute value of the SHAP value for the first {{sorted_abs_shaps|length - 1}} features, as well as the sum of all remaining ones.<br>
+                    We indicate a human-readable name for each of the features used in our model, based on a Voronoi tessellation of the crystal structure.
+                    For more details on exact definition and meaning of each of them, we refer to the publication where they were first introduced:
+                    <a href="https://doi.org/10.1103/PhysRevB.96.024104" target="_blank">L. Ward <em>et al.</em>, Phys. Rev. B 96, 024104 (2017)</a>.
+
+                    We just mention here that the chemical ordering describes how much the placement of species in a structure deviates from random; 
+                    the maximum packing efficiency measures the largest sphere that fits inside each Voronoi cell; and all other features are based on local environment attributes obtained comparing elemental properties (such as the electronegativity and 21 more) of the central atom to its neighbors; the features are then the minimum, maximum, range, mean, mean absolute deviation and range of these values for all atoms in the structure.
+                </p>
+            </div>            
+
+            <div>
+                <center>
+                    <table class="shap-table">
+                        <tr>
+                          <th>Feature name</th>
+                          <th>abs(SHAP value)</th> 
+                        </tr>
+                        {% for feature_name, abs_shap in sorted_abs_shaps %}    
+                        <tr class="{{'even' if loop.index % 2 == 0 else 'odd'}}-row">
+                            <td class="feature-name"><em>{{feature_name}}</em></td>
+                            <td><code>{{"%.4f"|format(abs_shap)}}</code></td> 
+                          </tr>
+                        {% endfor %}
+                    </table>
+                </center>
+            </div>
 
         {% else %}
         No layers could be found for this structure.

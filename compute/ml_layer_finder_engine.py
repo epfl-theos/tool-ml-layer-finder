@@ -49,6 +49,55 @@ import joblib
 __version__ = "21.11.0"
 
 
+def get_feature_name(pos):  # pylint: disable=too-many-branches
+    """Return the name of the feature, given its index `pos`."""
+
+    local_env_prop_names = [
+        "Atomic number",
+        "Mendeleev number",
+        "Atomic weight",
+        "Melting temperature",
+        "Periodic table column",
+        "Periodic table row",
+        "Covalent radius",
+        "Electronegativity",
+        "Number of filled s valence orbitals",
+        "Number of filled p valence orbitals",
+        "Number of filled d valence orbitals",
+        "Number of filled f valence orbitals",
+        "Number of valence electrons",
+        "Number of unfilled s valence orbitals",
+        "Number of unfilled p valence orbitals",
+        "Number of unfilled d valence orbitals",
+        "Number of unfilled f valence orbitals",
+        "Number of unfilled valence orbitals",
+        "DFT volume per atom",
+        "DFT band gap",
+        "DFT magnetic moment",
+        "Spacegroup number",
+    ]
+    assert len(local_env_prop_names) == 22
+    local_env_stats = ["min", "max", "range", "mean", "mean abs deviation"]
+    assert len(local_env_stats) == 5
+
+    if pos == 0:
+        return "Chemical ordering (first neighbors)"
+    if pos == 1:
+        return "Chemical ordering (second neighbors)"
+    if pos == 2:
+        return "Chemical ordering (third neighbors)"
+    if pos == 3:
+        return "Max packing efficiency"
+    # 4 above, 22*5 = 110 more, if the index is > 114 it's out of bounds
+    if pos >= 114:
+        raise ValueError("Only 114 features known")
+
+    idx = pos - 4
+    prop_idx = idx % len(local_env_prop_names)
+    stats_idx = idx // len(local_env_prop_names)
+    return f"{local_env_prop_names[prop_idx]} ({local_env_stats[stats_idx]})"
+
+
 def nice_print_rot(value, threshold=1.0e-4):
     """
     Converts a float number to a LaTeX string, possibly converting "common" values (integers, and simple square roots)
@@ -81,7 +130,7 @@ def nice_print_rot(value, threshold=1.0e-4):
 
 def process_structure_core(
     structure, logger, flask_request
-):  # pylint: disable=unused-argument, too-many-locals, too-many-statements
+):  # pylint: disable=unused-argument, too-many-locals, too-many-statements, too-many-branches
     start_time = time.time()
 
     # Get information on the crystal structure to be shown later
@@ -345,9 +394,24 @@ def process_structure_core(
         return_data["ML_predictions"] = False
 
     # Also get the SHAP values
-    shap_values = explainer(np.array(X))
-    print(shap_values)
-    # return_data["shap_values"] = shap_values
+    shap_explanation = explainer(np.array(X))
+    # This is now an array of the |shap|
+    abs_shap_values = np.abs(shap_explanation[0, :, 1].values)
+
+    MAX_DISPLAY = 20
+    sorted_shaps = sorted(list(zip(abs_shap_values, range(len(abs_shap_values)))))[::-1]
+
+    sorted_shap_with_feature_name = []
+    for idx in range(MAX_DISPLAY):
+        abs_shap, feature_pos = sorted_shaps[idx]
+        sorted_shap_with_feature_name.append([get_feature_name(feature_pos), abs_shap])
+    sorted_shap_with_feature_name.append(
+        [
+            f"Sum of {len(sorted_shaps) - MAX_DISPLAY} other features",
+            sum(shap[0] for shap in sorted_shaps[MAX_DISPLAY:]),
+        ]
+    )
+    return_data["sorted_abs_shaps"] = sorted_shap_with_feature_name
 
     # I return here; some sections will not be present in the output so they will not be shown.
     compute_time = time.time() - start_time
