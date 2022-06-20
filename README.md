@@ -31,4 +31,4 @@ If you want to check the Apache logs, you can run `./admin-tools/get-apache-logs
 This tool uses the ASE and pymatgen libraries for structure manipulation, and matminer for featurization.
 The tool is based upon the [tools-barebone framework](https://github.com/materialscloud-org/tools-barebone) developed by the Materials Cloud team.
 
-We acknowledge funding from the [MARVEL National Centre of Competence in Research](https://nccr-marvel.ch) of the Swiss National Science Foundation (SNSF), the [European Centre of Excellence MaX "Materials design at the Exascale"](http://www.max-centre.eu), the [swissuniversities P-5 "Materials Cloud" project](https://www.materialscloud.org/swissuniversities).
+We acknowledge funding from the [MARVEL National Centre of Competence in Research](https://nccr-marvel.ch) of the Swiss National Science Foundation (SNSF).
