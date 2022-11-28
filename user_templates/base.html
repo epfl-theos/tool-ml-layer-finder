@@ -177,172 +177,197 @@
 
             <div>
                 <p>
-                    The trained machine learning model (a random forest classifier) identifies bulk compounds that can be exfoliated into 2D materials. <br>
-                    The model has a high recall of 98% (i.e., an extremely low number of false negatives), which means the model might discard only very few materials that are actually exfoliable.
-                    At the same time, it significantly reduces the number of candidates that need to be sent to more accurate but expensive filtering steps (e.g., by computing binding energies using DFT), thus significantly lowering the total workflow computational cost. <br>
-                    The model was trained with DFT binding-energy results from the following paper: <a href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>, Nature Nanotech. 13, 246-252 (2018)</a>.
+                    The trained machine learning model (a random forest classifier) identifies bulk compounds that can
+                    be exfoliated into 2D materials. <br>
+                    The model has a high recall of 98% (i.e., an extremely low number of false negatives), which means
+                    the model might discard only very few materials that are actually exfoliable.
+                    At the same time, it significantly reduces the number of candidates that need to be sent to more
+                    accurate but expensive filtering steps (e.g., by computing binding energies using DFT), thus
+                    significantly lowering the total workflow computational cost. <br>
+                    The model was trained with DFT binding-energy results from the following paper: <a
+                        href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>,
+                        Nature Nanotech. 13, 246-252 (2018)</a>.
                 </p>
             </div>
 
             {% if ML_predictions %}
             <div
-            style="border: 1px solid #005a32; border-radius: 6px; padding: 20px; margin: 30px; background-color: #edf8e9;">
-            Our random-forest-classifier model predicts that the structure has a <strong>low binding energy</strong>, and thus it might be exfoliable.
-            {% else %}
-            <div
-            style="border: 1px solid #99000d; border-radius: 6px; padding: 20px; margin: 30px; background-color: #fee5d9;">
-            Our random-forest-classifier model predicts that the structure has a <strong>high binding energy</strong>, and thus it might be non-exfoliable.
-            {% endif %}
+                style="border: 1px solid #005a32; border-radius: 6px; padding: 20px; margin: 30px; background-color: #edf8e9;">
+                Our random-forest-classifier model predicts that the structure has a <strong>low binding
+                    energy</strong>, and thus it might be exfoliable.
+                {% else %}
+                <div
+                    style="border: 1px solid #99000d; border-radius: 6px; padding: 20px; margin: 30px; background-color: #fee5d9;">
+                    Our random-forest-classifier model predicts that the structure has a <strong>high binding
+                        energy</strong>, and thus it might be non-exfoliable.
+                    {% endif %}
+                </div>
+
+                <h3>
+                    <center>Feature importance</center>
+                </h3>
+                <div>
+                    <p>
+                        We summarise below the results of a SHapely Additive exPlanations (SHAP) analysis obtained using
+                        the <a href="https://shap.readthedocs.io" target="_blank">shap</a> library,
+                        that helps to explain the most relevant features.<br>
+                        We show the absolute value of the SHAP value for the first {{sorted_abs_shaps|length - 1}}
+                        features, as well as the sum of all remaining ones.<br>
+                        We indicate a human-readable name for each of the features used in our model, based on a Voronoi
+                        tessellation of the crystal structure.
+                        For more details on exact definition and meaning of each of them, we refer to the publication
+                        where they were first introduced:
+                        <a href="https://doi.org/10.1103/PhysRevB.96.024104" target="_blank">L. Ward <em>et al.</em>,
+                            Phys. Rev. B 96, 024104 (2017)</a>.
+
+                        We just mention here that the chemical ordering describes how much the placement of species in a
+                        structure deviates from random;
+                        the maximum packing efficiency measures the largest sphere that fits inside each Voronoi cell;
+                        and all other features are based on local environment attributes obtained comparing elemental
+                        properties (such as the electronegativity and 21 more) of the central atom to its neighbors; the
+                        features are then the minimum, maximum, range, mean, mean absolute deviation and range of these
+                        values for all atoms in the structure.
+                    </p>
+                </div>
+
+                <div>
+                    <center>
+                        <table class="shap-table">
+                            <tr>
+                                <th>Feature name</th>
+                                <th>abs(SHAP value)</th>
+                            </tr>
+                            {% for feature_name, abs_shap in sorted_abs_shaps %}
+                            <tr class="{{'even' if loop.index % 2 == 0 else 'odd'}}-row">
+                                <td class="feature-name"><em>{{feature_name}}</em></td>
+                                <td><code>{{"%.4f"|format(abs_shap)}}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </center>
+                </div>
+
+                <div>
+                    <p style="margin-top: 20px">The figure below shows instead the SHAP values on <em>all</em>
+                        structures in the dataset (the table above instead focuses only on the uploaded structure.</p>
+
+                    <center>
+                        <img style="width: 70%; max-width: 780px;" src="../../user_static/img/SHAP-figure.jpg">
+                        <p><strong>Figure</strong>: SHAP plot summarizing the five most important variables of the
+                            model, evaluated on all structures in the dataset.</p>
+                    </center>
+                </div>
+
+                {% else %}
+                No layers could be found for this structure.
+                {% endif %}
+
             </div>
-        
-            <h3>
-                <center>Feature importance</center>
-            </h3>
-            <div>
-                <p>
-                    We summarise below the results of a SHapely Additive exPlanations (SHAP) analysis obtained using the <a href="https://shap.readthedocs.io" target="_blank">shap</a> library,
-                    that helps to explain the most relevant features.<br>
-                    We show the absolute value of the SHAP value for the first {{sorted_abs_shaps|length - 1}} features, as well as the sum of all remaining ones.<br>
-                    We indicate a human-readable name for each of the features used in our model, based on a Voronoi tessellation of the crystal structure.
-                    For more details on exact definition and meaning of each of them, we refer to the publication where they were first introduced:
-                    <a href="https://doi.org/10.1103/PhysRevB.96.024104" target="_blank">L. Ward <em>et al.</em>, Phys. Rev. B 96, 024104 (2017)</a>.
 
-                    We just mention here that the chemical ordering describes how much the placement of species in a structure deviates from random; 
-                    the maximum packing efficiency measures the largest sphere that fits inside each Voronoi cell; and all other features are based on local environment attributes obtained comparing elemental properties (such as the electronegativity and 21 more) of the central atom to its neighbors; the features are then the minimum, maximum, range, mean, mean absolute deviation and range of these values for all atoms in the structure.
-                </p>
-            </div>            
+            <hr style="margin-top: 40px;">
 
-            <div>
-                <center>
-                    <table class="shap-table">
-                        <tr>
-                          <th>Feature name</th>
-                          <th>abs(SHAP value)</th> 
-                        </tr>
-                        {% for feature_name, abs_shap in sorted_abs_shaps %}    
-                        <tr class="{{'even' if loop.index % 2 == 0 else 'odd'}}-row">
-                            <td class="feature-name"><em>{{feature_name}}</em></td>
-                            <td><code>{{"%.4f"|format(abs_shap)}}</code></td> 
-                          </tr>
-                        {% endfor %}
-                    </table>
-                </center>
+            <div id='finalinfo'>
+                <div
+                    style="border: 1px solid #aaa;border-radius: 6px;margin-left: -5px;padding: 5px;margin-right: -5px;margin-bottom: 15px;padding-bottom: 0;background-color: #ededed;">
+                    <p><strong>How to cite:</strong> If you use this tool, please cite:<br>
+                        <a href="https://iopscience.iop.org/article/10.1088/2632-2153/ac9bca/meta" target="_blank">
+                            M. T. Vahdat, K. A. Varoon, and G. Pizzi,
+                            Machine-learning accelerated identification of exfoliable two-dimensional
+                            materials, Machine Learning: Science and Technology, 3, 4 (2022).
+                            DOI:10.1088/2632-2153/ac9bca
+                        </a>
+                    </p>
+                </div>
+                <p>Found a bug or have a suggestion? Please <a
+                        href="https://github.com/epfl-theos/tool-ml-layer-finder/issues" target="_blank">check existing
+                        issues here</a> and, if needed, open a new one.</p>
+                <p><span style="font-weight: bold;">
+                        Technical info</span>:
+                    Time spent to compute quantities: {{ '%.3f' % compute_time }} s.
+                    <a href="https://wiki.fysik.dtu.dk/ase/index.html" target="_blank">ASE</a> version: {{ ase_version
+                    }}.
+                    <a href="https://github.com/hackingmaterials/matminer" target="_blank">matminer</a> version: {{
+                    matminer_version }}.
+                    <a href="https://github.com/joblib/joblib" target="_blank">joblib</a> version: {{ joblib_version }}.
+                    <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a>
+                    version: {{tools_barebone_version}}.
+                    <a href="https://github.com/epfl-theos/tool-ml-layer-finder" target="_blank">This tool
+                        (tool-ml-layer-finder)</a> version: {{this_tool_version}}.
             </div>
 
-            <div>
-                <p style="margin-top: 20px">The figure below shows instead the SHAP values on <em>all</em> structures in the dataset (the table above instead focuses only on the uploaded structure.</p>
-
-                <center>
-                    <img style="width: 70%; max-width: 780px;" src="../../user_static/img/SHAP-figure.jpg">
-                    <p><strong>Figure</strong>: SHAP plot summarizing the five most important variables of the model, evaluated on all structures in the dataset.</p>
-                </center>
-            </div>
-
-        {% else %}
-        No layers could be found for this structure.
+        </div>
+        {% if has_common_layers %}
+        {# Only show if the vue div has been put on the page #}
+        <script src="../../user_static/js/main.js"></script>
         {% endif %}
+        <script src="../../user_static/js/visualization.js"></script>
+        <script>
+            bulkstructureviewer = jsmolCrystal({{ xsfstructure| tojson | safe }}, "structure-content-bulk", "jmolAppletbulk", [2, 2, 2]);
+            {% for layer_xsf, this_layer_indices in layers %}
+            layerstructureviewers[{{ loop.index }}] = jsmolCrystal({{ layer_xsf| tojson | safe }}, "structure-content-layer{{loop.index}}", "jmolAppletlayer{{loop.index}}", [3, 3, 1]);
+            {% endfor %}
 
-        </div>
+            $(document).ready(function () {
+                var divjsmol = document.getElementById('crystal-bulk');
+                var jsmolcontent = document.getElementById('jmolAppletbulk_appletinfotablediv');
+                divjsmol.appendChild(jsmolcontent);
+                enableDoubleTap(bulkstructureviewer['_mouseInterface'], function () {
+                    toggleStrVisInteraction(false, 'str-overlay-bulk');
+                }, ignoreOnMove = true);
 
-        <hr style="margin-top: 40px;">
+                var stroverlay = document.getElementById('str-overlay-bulk');
+                stroverlay.onmouseenter = function () {
+                    this.style.backgroundColor = "rgba(230,230,230,0.5)";
+                    document.getElementById('str-overlay-bulk-span').innerText = "Double click to toggle interaction";
+                    // console.log(this, 'enter');
+                }
+                stroverlay.onmouseleave = function () {
+                    // 0.0 for alpha doesn't work properly, apparently
+                    this.style.backgroundColor = "rgba(255,255,255,0.01)";
+                    document.getElementById('str-overlay-bulk-span').innerText = "";
+                    // console.log(this, 'leave');
+                }
 
-        <div id='finalinfo'>
-            <div
-                style="border: 1px solid #aaa;border-radius: 6px;margin-left: -5px;padding: 5px;margin-right: -5px;margin-bottom: 15px;padding-bottom: 0;background-color: #ededed;">
-                <p><strong>How to cite:</strong> If you use this tool, please cite:<br>
-                    <strong>M. T. Vahdat, K. A. Varoon, and G. Pizzi,
-                        <em>Machine-learning accelerated identification of exfoliable two-dimensional materials</em>, submitted (2022).
-                    </strong>
-                </p>
-            </div>
-            <p>Found a bug or have a suggestion? Please <a
-                    href="https://github.com/epfl-theos/tool-ml-layer-finder/issues" target="_blank">check existing
-                    issues here</a> and, if needed, open a new one.</p>
-            <p><span style="font-weight: bold;">
-                    Technical info</span>:
-                Time spent to compute quantities: {{ '%.3f' % compute_time }} s.
-                <a href="https://wiki.fysik.dtu.dk/ase/index.html" target="_blank">ASE</a> version: {{ ase_version }}.
-                <a href="https://github.com/hackingmaterials/matminer" target="_blank">matminer</a> version: {{
-                matminer_version }}.
-                <a href="https://github.com/joblib/joblib" target="_blank">joblib</a> version: {{ joblib_version }}.
-                <a href="https://github.com/materialscloud-org/tools-barebone" target="_blank">tools-barebone</a>
-                version: {{tools_barebone_version}}.
-                <a href="https://github.com/epfl-theos/tool-ml-layer-finder" target="_blank">This tool (tool-ml-layer-finder)</a> version: {{this_tool_version}}.
-        </div>
+                // Enable double-tap events for phones
+                enableDoubleTap(stroverlay, function () {
+                    toggleStrVisInteraction(true, 'str-overlay-bulk');
+                });
 
-    </div>
-    {% if has_common_layers %}
-    {# Only show if the vue div has been put on the page #}
-    <script src="../../user_static/js/main.js"></script>
-    {% endif %}
-    <script src="../../user_static/js/visualization.js"></script>
-    <script>
-        bulkstructureviewer = jsmolCrystal({{ xsfstructure| tojson | safe }}, "structure-content-bulk", "jmolAppletbulk", [2, 2, 2]);
-        {% for layer_xsf, this_layer_indices in layers %}
-        layerstructureviewers[{{ loop.index }}] = jsmolCrystal({{ layer_xsf| tojson | safe }}, "structure-content-layer{{loop.index}}", "jmolAppletlayer{{loop.index}}", [3, 3, 1]);
-        {% endfor %}
 
-        $(document).ready(function () {
-            var divjsmol = document.getElementById('crystal-bulk');
-            var jsmolcontent = document.getElementById('jmolAppletbulk_appletinfotablediv');
-            divjsmol.appendChild(jsmolcontent);
-            enableDoubleTap(bulkstructureviewer['_mouseInterface'], function () {
-                toggleStrVisInteraction(false, 'str-overlay-bulk');
-            }, ignoreOnMove = true);
+                {% for layer_xsf, this_layer_indices in layers %}
 
-            var stroverlay = document.getElementById('str-overlay-bulk');
+                var divjsmol = document.getElementById('crystal-layer{{loop.index}}');
+                var jsmolcontent = document.getElementById('jmolAppletlayer{{loop.index}}_appletinfotablediv');
+                divjsmol.appendChild(jsmolcontent);
+                enableDoubleTap(layerstructureviewers[{{ loop.index }}]['_mouseInterface'], function () {
+                    toggleStrVisInteraction(false, 'str-overlay-layer{{loop.index}}');
+                }, ignoreOnMove = true);
+
+            var stroverlay = document.getElementById('str-overlay-layer{{loop.index}}');
             stroverlay.onmouseenter = function () {
                 this.style.backgroundColor = "rgba(230,230,230,0.5)";
-                document.getElementById('str-overlay-bulk-span').innerText = "Double click to toggle interaction";
+                document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "Double click to toggle interaction";
                 // console.log(this, 'enter');
             }
             stroverlay.onmouseleave = function () {
                 // 0.0 for alpha doesn't work properly, apparently
                 this.style.backgroundColor = "rgba(255,255,255,0.01)";
-                document.getElementById('str-overlay-bulk-span').innerText = "";
+                document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "";
                 // console.log(this, 'leave');
             }
 
             // Enable double-tap events for phones
             enableDoubleTap(stroverlay, function () {
-                toggleStrVisInteraction(true, 'str-overlay-bulk');
+                toggleStrVisInteraction(true, 'str-overlay-layer{{loop.index}}');
             });
 
+            {% endfor %}
 
-            {% for layer_xsf, this_layer_indices in layers %}
-
-            var divjsmol = document.getElementById('crystal-layer{{loop.index}}');
-            var jsmolcontent = document.getElementById('jmolAppletlayer{{loop.index}}_appletinfotablediv');
-            divjsmol.appendChild(jsmolcontent);
-            enableDoubleTap(layerstructureviewers[{{ loop.index }}]['_mouseInterface'], function () {
-                toggleStrVisInteraction(false, 'str-overlay-layer{{loop.index}}');
-            }, ignoreOnMove = true);
-
-        var stroverlay = document.getElementById('str-overlay-layer{{loop.index}}');
-        stroverlay.onmouseenter = function () {
-            this.style.backgroundColor = "rgba(230,230,230,0.5)";
-            document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "Double click to toggle interaction";
-            // console.log(this, 'enter');
-        }
-        stroverlay.onmouseleave = function () {
-            // 0.0 for alpha doesn't work properly, apparently
-            this.style.backgroundColor = "rgba(255,255,255,0.01)";
-            document.getElementById('str-overlay-layer{{loop.index}}-span').innerText = "";
-            // console.log(this, 'leave');
-        }
-
-        // Enable double-tap events for phones
-        enableDoubleTap(stroverlay, function () {
-            toggleStrVisInteraction(true, 'str-overlay-layer{{loop.index}}');
-        });
-
-        {% endfor %}
-
-        $('[data-toggle="tooltip"]').tooltip({ placement: "top" });
+            $('[data-toggle="tooltip"]').tooltip({ placement: "top" });
       });
 
-    </script>
+        </script>
 
-    <div style="position: relative" data-iframe-height></div>
+        <div style="position: relative" data-iframe-height></div>
 
-</div>
+    </div>
