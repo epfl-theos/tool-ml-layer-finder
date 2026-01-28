@@ -15,7 +15,7 @@ This tool is deployed on the Materials Cloud "Tools" section [here](https://ml-l
 ## How to cite
 If you use this tool, please cite the following work:
 
-* **M. T. Vahdat, K. A. Varoon, and G. Pizzi, *Machine-learning accelerated identification of exfoliable two-dimensional materials*, submitted (2022).**
+* **M. T. Vahdat, K. A. Varoon, and G. Pizzi, *Machine-learning accelerated identification of exfoliable two-dimensional materials*, Mach. Learn.: Sci. Technol. 3, 045014 (2022); [https://doi.org/10.1088/2632-2153/ac9bca](https://doi.org/10.1088/2632-2153/ac9bca).**
 
 You might also want to cite the [ASE](https://wiki.fysik.dtu.dk/ase/), [pymatgen](http://pymatgen.org), [matminer](https://github.com/hackingmaterials/matminer) and [shap](https://shap.readthedocs.io/) libraries that are used internally by the tool, as well as <a href="https://doi.org/10.1038/s41565-017-0035-5" target="_blank">N. Mounet <em>et al.</em>, <em>Two-dimensional materials from high-throughput computational exfoliation of experimentally known compounds</em>, Nature Nanotech. 13, 246-252 (2018)</a> where the geometrical-screening code was originally developed, and from which the DFT data for the binding energies was extracted to train our model.
 
